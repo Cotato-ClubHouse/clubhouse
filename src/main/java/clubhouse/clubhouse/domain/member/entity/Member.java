@@ -1,20 +1,14 @@
-package clubhouse.clubhouse.club.domain;
+package clubhouse.clubhouse.domain.member.entity;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import clubhouse.clubhouse.category.domain.Category;
-import clubhouse.clubhouse.memberclub.domain.MemberClub;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,22 +16,32 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Club {
+public class Member {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "club_id")
+	@Column(name = "member_id")
 	private Long id;
 
-	//@Column(name = "club_name")
+	@Column(name = "member_name")
 	private String name;
 
-	//@Column(name = "club_admin_id")
-	private Long admin_id;
+	@Column(name = "member_email")
+	private String email;//email을 id로 사용 예정
 
-	@OneToOne(fetch = FetchType.LAZY)
-	private Category category;
+	@Column(name = "member_pw")
+	private String password;
 
-	@OneToMany(mappedBy = "club")
+	@Column(name = "member_phone")
+	private String phone;
+
+	@Column(name = "member_univ")
+	private String univ;
+
+	@Column(name = "member_age")
+	private Long age;
+
+	@OneToMany(mappedBy = "member")
 	private List<MemberClub> memberClubs = new ArrayList<>();
 
 }

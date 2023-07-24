@@ -1,7 +1,7 @@
-package clubhouse.clubhouse.memberclub.domain;
+package clubhouse.clubhouse.domain.member.entity;
 
-import clubhouse.clubhouse.club.domain.Club;
-import clubhouse.clubhouse.member.domain.Member;
+import clubhouse.clubhouse.domain.club.entity.Club;
+import clubhouse.clubhouse.domain.member.entity.Member;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -19,10 +19,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MemberClub {
 
+	//중간 테이블
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "memberclub_id")
-	private Long MemberClub;
+	private Long memberClub;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "member_id")

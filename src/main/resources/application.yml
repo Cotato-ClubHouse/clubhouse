@@ -1,7 +1,7 @@
 spring:
   datasource:
     driver-class-name: org.h2.Driver
-    url: jdbc:h2:mem:clubhouse
+    url: jdbc:h2:tcp://localhost/~/clubhouse
     username: sa
     password:
 
