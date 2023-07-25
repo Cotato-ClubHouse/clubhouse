@@ -25,4 +25,8 @@ public class Form {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "club_id")
     private Club club;
+
+    @Column(name = "form_status")
+    @Enumerated(EnumType.STRING)
+    private FormStatus formStatus;
 }

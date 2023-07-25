@@ -21,4 +21,7 @@ public class Question {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "form_id")
     private Form form;
+
+    @Column(name = "question_num")
+    private Long questionNum;
 }
