@@ -5,6 +5,7 @@ import java.util.List;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -36,11 +37,21 @@ public class Member {
 	@Column(name = "member_age")
 	private Long age;
 
-	@OneToMany(mappedBy = "member")
-	private List<MemberClub> memberClubs = new ArrayList<>();
-
 	@Column(name = "member_gender")
 	@Enumerated(EnumType.STRING)
 	private Gender gender;
 
+	@OneToMany(mappedBy = "member")
+	private List<MemberClub> memberClubs = new ArrayList<>();
+
+	@Builder
+	public Member(String name, String email, String password, String phone, String univ, Long age, Gender gender) {
+		this.name = name;
+		this.email = email;
+		this.password = password;
+		this.phone = phone;
+		this.univ = univ;
+		this.age = age;
+		this.gender = gender;
+	}
 }
