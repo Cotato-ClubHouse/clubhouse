@@ -3,6 +3,8 @@ package clubhouse.clubhouse.domain.member.service;
 import org.springframework.stereotype.Service;
 
 import clubhouse.clubhouse.domain.member.entity.Member;
+import clubhouse.clubhouse.domain.member.exception.AppException;
+import clubhouse.clubhouse.domain.member.exception.ErrorCode;
 import clubhouse.clubhouse.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 
@@ -15,8 +17,8 @@ public class MemberService {
 	public String join(String email, String password){
 		//중복 체크
 		memberRepository.findByEmail(email)
-			.ifPresent(user -> {
-				throw new IllegalArgumentException("이미 존재하는 이메일입니다.");
+			.ifPresent(member -> {
+				throw new AppException(ErrorCode.EMAIL_DUPLICATED, email + "는 이미 존재하는 이메일입니다.");
 			});
 
 		Member newMember = Member.builder()

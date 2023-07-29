@@ -2,6 +2,7 @@ package clubhouse.clubhouse.domain.member.controller;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,11 @@ class MemberControllerTest {
 	@Autowired
 	private MemberRepository memberRepository;
 
+	@BeforeEach
+	void clear(){
+		memberRepository.deleteAll();
+	}
+
 	@Test
 	@DisplayName("회원가입 성공")
 	void test1() throws Exception {
@@ -48,15 +54,15 @@ class MemberControllerTest {
 	}
 
 	@Test
-	@DisplayName("회원가입 실패")
+	@DisplayName("회원가입 중복")
 	void test2() throws Exception {
 		String email = "dohyung@clubhouse.com";
 		String password = "1q2w3e4r";
 
 		Member member1 = Member.builder()
 				.email(email)
-					.password(password)
-						.build();
+				.password(password)
+				.build();
 
 		memberRepository.save(member1);
 
