@@ -8,7 +8,9 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public enum ErrorCode {
-	EMAIL_DUPLICATED(HttpStatus.CONFLICT, "");
+	EMAIL_DUPLICATED(HttpStatus.CONFLICT, ""),
+	EMAIL_NOTFOUND(HttpStatus.NOT_FOUND, ""),
+	INVAILD_PASSWORD(HttpStatus.UNAUTHORIZED, "");
 
 	private HttpStatus httpStatus;
 	private String message;

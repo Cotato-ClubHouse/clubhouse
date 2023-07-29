@@ -34,4 +34,15 @@ public class MemberService {
 		return "회원가입에 성공했습니다.";
 	}
 
+	public String login(String email, String password) {
+		// email 없음
+		Member findMember = memberRepository.findByEmail(email)
+			.orElseThrow(() ->new AppException(ErrorCode.EMAIL_NOTFOUND, email + "이 존재하지 않습니다."));
+		//password 틀림
+		if(!encoder.matches(password, findMember.getPassword())){
+			throw new AppException(ErrorCode.INVAILD_PASSWORD, "패스워드가 일치하지 않습니다.");
+		}
+
+		return "token";
+	}
 }

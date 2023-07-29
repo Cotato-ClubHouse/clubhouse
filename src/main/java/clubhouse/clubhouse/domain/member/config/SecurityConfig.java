@@ -23,10 +23,11 @@ public class SecurityConfig {
 				.cors().disable()
 				.csrf((csrf) -> csrf
 					.ignoringRequestMatchers(new AntPathRequestMatcher("/h2-console/**"))
-					.ignoringRequestMatchers(new AntPathRequestMatcher("/v1/users/join")))
+					.ignoringRequestMatchers(new AntPathRequestMatcher("/v1/users/**"))
+				)
 				.authorizeHttpRequests( authorizeHttpRequests -> authorizeHttpRequests
 					.requestMatchers(new AntPathRequestMatcher("/**")).permitAll()
-					.requestMatchers(new AntPathRequestMatcher("/v1/users/join")).permitAll()
+					.requestMatchers(new AntPathRequestMatcher("/v1/users/**")).permitAll()
 				)
 				.headers().frameOptions().sameOrigin().and()
 				.sessionManagement()
