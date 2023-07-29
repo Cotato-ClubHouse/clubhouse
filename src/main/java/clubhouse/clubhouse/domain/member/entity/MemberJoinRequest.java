@@ -3,8 +3,10 @@ package clubhouse.clubhouse.domain.member.entity;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor
 public class MemberJoinRequest {
 
 	@NotBlank(message = "이메일을 입력해주세요")

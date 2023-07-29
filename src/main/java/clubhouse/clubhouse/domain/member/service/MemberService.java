@@ -1,5 +1,6 @@
 package clubhouse.clubhouse.domain.member.service;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import clubhouse.clubhouse.domain.member.entity.Member;
@@ -14,6 +15,8 @@ public class MemberService {
 
 	private final MemberRepository memberRepository;
 
+	private final BCryptPasswordEncoder encoder;
+
 	public String join(String email, String password){
 		//중복 체크
 		memberRepository.findByEmail(email)
@@ -23,7 +26,7 @@ public class MemberService {
 
 		Member newMember = Member.builder()
 			.email(email)
-			.password(password)
+			.password(encoder.encode(password))
 			.build();
 
 		memberRepository.save(newMember);
