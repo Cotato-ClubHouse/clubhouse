@@ -16,7 +16,7 @@ public class MemberService {
 		//중복 체크
 		memberRepository.findByEmail(email)
 			.ifPresent(user -> {
-				throw new RuntimeException(email + "는 이미 존재합니다.");
+				throw new IllegalArgumentException("이미 존재하는 이메일입니다.");
 			});
 
 		Member newMember = Member.builder()
