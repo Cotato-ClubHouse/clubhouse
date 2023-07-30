@@ -1,5 +1,6 @@
 package clubhouse.clubhouse.domain.member.service;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -7,6 +8,7 @@ import clubhouse.clubhouse.domain.member.entity.Member;
 import clubhouse.clubhouse.domain.member.exception.AppException;
 import clubhouse.clubhouse.domain.member.exception.ErrorCode;
 import clubhouse.clubhouse.domain.member.repository.MemberRepository;
+import clubhouse.clubhouse.utils.JwtUtil;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -16,6 +18,11 @@ public class MemberService {
 	private final MemberRepository memberRepository;
 
 	private final BCryptPasswordEncoder encoder;
+
+	@Value("${JWT_SECRET_KEY}")
+	private String secretKey;
+
+	private Long expiredMs = 1000 * 60 * 60L;
 
 	public String join(String email, String password){
 		//중복 체크
@@ -43,6 +50,8 @@ public class MemberService {
 			throw new AppException(ErrorCode.INVAILD_PASSWORD, "패스워드가 일치하지 않습니다.");
 		}
 
-		return "token";
+		String token = JwtUtil.createToken(findMember.getEmail(), secretKey, expiredMs);
+
+		return token;
 	}
 }

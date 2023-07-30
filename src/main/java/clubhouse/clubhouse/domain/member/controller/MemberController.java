@@ -1,5 +1,8 @@
 package clubhouse.clubhouse.domain.member.controller;
 
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,5 +28,10 @@ public class MemberController {
 	@PostMapping("/login")
 	public String login(@RequestBody MemberLoginRequest memberLoginRequest){
 		return memberService.login(memberLoginRequest.getEmail(), memberLoginRequest.getPassword());
+	}
+
+	@PostMapping("/form")
+	public ResponseEntity<String> writeForm(Authentication authentication){
+		return ResponseEntity.ok().body(authentication.getName() + "님의 공고 등록이 완료 되었습니다.");
 	}
 }
