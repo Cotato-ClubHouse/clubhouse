@@ -13,6 +13,6 @@ import java.util.Optional;
 public interface ApplicationRepository extends JpaRepository<Application, Long> {
     List<Application> findAllByForm(Form formId);
 
-    Optional<Application> findByMember(Member member);
+    Optional<Application> findByMemberAndForm(Member member, Form form);
 
 }
