@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
 @Entity
 @Table(name = "application")
@@ -32,6 +33,18 @@ public class Application {
     @JoinColumn(name = "form_id")
     private Form form;
 
+    @JoinColumn(name = "is_pass")
+    private boolean isPass;
 
+    private Application(LocalDateTime localDateTime, Member member, Form form, boolean isPass) {
+        this.localDateTime = localDateTime;
+        this.member = member;
+        this.form = form;
+        this.isPass = isPass();
+    }
+
+    public static Application createApplication(LocalDateTime localDateTime,Member member,Form form, boolean isPass) {
+        return new Application(localDateTime,member,form, isPass);
+    }
 
 }

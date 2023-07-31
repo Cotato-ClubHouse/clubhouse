@@ -1,10 +1,14 @@
 package clubhouse.clubhouse.domain.application.entity;
 
+import clubhouse.clubhouse.domain.form.entity.Form;
 import clubhouse.clubhouse.domain.form.entity.Question;
+import clubhouse.clubhouse.domain.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -26,4 +30,14 @@ public class Answer {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "question_id")
     private Question question;
+
+    private Answer(String contents, Application application, Question question) {
+        this.contents = contents;
+        this.application = application;
+        this.question = question;
+    }
+
+    public static Answer createAnswer(String contents, Application application, Question question) {
+        return new Answer(contents, application, question);
+    }
 }
