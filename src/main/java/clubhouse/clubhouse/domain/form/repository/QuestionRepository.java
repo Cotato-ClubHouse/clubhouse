@@ -8,5 +8,7 @@ import java.util.List;
 
 @Repository
 public interface QuestionRepository extends JpaRepository<Question,Long> {
-    List<Question> findByFormId(Long formId);
+    List<Question> findAllByFormId(Long formId);
+
+//    List<Question> findAllOrderByQuestionNumDesc();
 }
