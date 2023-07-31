@@ -6,6 +6,7 @@ import clubhouse.clubhouse.domain.application.repository.ApplicationRepository;
 import clubhouse.clubhouse.domain.form.entity.Form;
 import clubhouse.clubhouse.domain.form.entity.Question;
 import clubhouse.clubhouse.domain.form.service.FormService;
+import clubhouse.clubhouse.domain.member.MemberRepository;
 import clubhouse.clubhouse.domain.member.entity.Member;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,11 +28,13 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     private final FormService formService;
 
+    private final MemberRepository memberRepository;
+
 
     /**
      * 나중에 MemberService 완성되면 만들어줘야함 TODO
      */
-    private final MemberService memberService;
+    //private final MemberService memberService;
 
     
     //지원서 제출(사용자)
@@ -45,25 +48,25 @@ public class ApplicationServiceImpl implements ApplicationService {
         List<Question> questions = formService.findAllQuestions(formId); //여기서 순서 맞춰줘야함
 
         List<String> answers = applyRequestDto.getAnswers();
-
-        /**
-         * clubId에 해당하는 form을 찾아서 return COMPLETE
-         * return Form
-         */
+        
+        //해당 form 가져오기
         Form form = formService.findById(formId)
                 .orElseThrow(() -> new IllegalArgumentException("form이 없습니다"));
-
-        /**
-         * member 찾기 ToDO
-         */
-        Member member =  memberService.findMemberById(applyRequestDto.getMember_id());
-        //Member member = new Member(); //임시 데이터
         
+        Member member = memberRepository.findById(applyRequestDto.getMember_id())
+                .orElseThrow(() -> new IllegalArgumentException("해당 member가 없습니다"));//임시 데이터
+
+        //이미 지원한 멤버일 때는 에러
+        Optional<Application> findAlreadyExistMember = applicationRepository.findByMember(member);
+        if (findAlreadyExistMember.isPresent()) {
+            throw new IllegalArgumentException("이미 신청서가 존재합니다");
+        }
+
         //값이 없는 답변이 있으면 예외 처리
         int index=1;
         for (String answer : answers) {
             if (answer.trim().equals("")) {
-                throw new IllegalAccessException("입력되지 않은 질문이 있습니다("+index+"번째 칠문");
+                throw new IllegalAccessException("입력되지 않은 질문이 있습니다("+index+"번째 칠문)");
             }
             index++;
         }
