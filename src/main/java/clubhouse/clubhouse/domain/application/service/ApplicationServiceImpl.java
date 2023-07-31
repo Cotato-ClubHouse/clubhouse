@@ -30,23 +30,11 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     private final MemberRepository memberRepository;
 
-
-    /**
-     * 나중에 MemberService 완성되면 만들어줘야함 TODO
-     */
-    //private final MemberService memberService;
-
-    
     //지원서 제출(사용자)
     @Override
-    public ApplyResponseDto apply(ApplyRequestDto applyRequestDto) throws IllegalAccessException {
+    public void apply(ApplyRequestDto applyRequestDto) throws IllegalAccessException {
         Long formId = applyRequestDto.getForm_id();
-        /**
-         * clubID에 해당하는 질문 목록을 찾아야함 COMPLETE
-         * return List<Question>
-         */
         List<Question> questions = formService.findAllQuestions(formId); //여기서 순서 맞춰줘야함
-
         List<String> answers = applyRequestDto.getAnswers();
         
         //해당 form 가져오기
@@ -66,7 +54,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         int index=1;
         for (String answer : answers) {
             if (answer.trim().equals("")) {
-                throw new IllegalAccessException("입력되지 않은 질문이 있습니다("+index+"번째 칠문)");
+                throw new IllegalArgumentException("입력되지 않은 질문이 있습니다("+index+"번째 칠문)");
             }
             index++;
         }
@@ -82,10 +70,6 @@ public class ApplicationServiceImpl implements ApplicationService {
             i++;
         }
 
-        /**
-         * TODO
-         */
-        return new ApplyResponseDto(); //임시 returnDto
     }
 
 
@@ -103,22 +87,15 @@ public class ApplicationServiceImpl implements ApplicationService {
         ApplyListResponseDto responseDto = new ApplyListResponseDto();
         responseDto.setHttpStatus(HttpStatus.OK);
 
-        /**
-         * findMemberBy id TODO
-         */
 
         List<ApplyListResponseForm> responseFormList = new ArrayList<>();
         for (Application apply : applyList){
             Member member = apply.getMember();
-            String name = member.getName(); //member.service하기 전까지는 못함 TODO
+            String name = member.getName();
             Long age = member.getAge();
             String univ = member.getUniv();
-            /**
-             * 임시데이터임 나중에 memberService개발 후 바꿔줘야함 TODO
-             *  ApplyListResponseForm applyForm = new ApplyListResponseForm(name,age,univ,false, apply.getId());
-             */
+
             ApplyListResponseForm applyForm = new ApplyListResponseForm(name,age,univ,false, apply.getId());
-            //ApplyListResponseForm applyForm = new ApplyListResponseForm(name,age,univ,false, apply.getId()); 임시 데이터
 
             responseFormList.add(applyForm);
 
