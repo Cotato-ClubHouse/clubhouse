@@ -40,7 +40,7 @@ public class Application {
         this.localDateTime = localDateTime;
         this.member = member;
         this.form = form;
-        this.isPass = isPass();
+        this.isPass = isPass;
     }
 
     public static Application createApplication(LocalDateTime localDateTime,Member member,Form form, boolean isPass) {
