@@ -17,12 +17,20 @@ public class JwtUtil {
 			.getBody().get("email", String.class);
 	}
 
-	public static String createToken(String email, String secretKey, long expiredTimeMs){
+	public static String createAccessToken(String email, String secretKey, long expiredTimeMs){
 		Claims claims = Jwts.claims();
 		claims.put("email", email);
 
 		return Jwts.builder()
 			.setClaims(claims)
+			.setIssuedAt(new Date(System.currentTimeMillis()))
+			.setExpiration(new Date(System.currentTimeMillis() + expiredTimeMs))
+			.signWith(SignatureAlgorithm.HS256, secretKey)
+			.compact();
+	}
+
+	public static String createRefreshToken(String email, String secretKey, long expiredTimeMs){
+		return Jwts.builder()
 			.setIssuedAt(new Date(System.currentTimeMillis()))
 			.setExpiration(new Date(System.currentTimeMillis() + expiredTimeMs))
 			.signWith(SignatureAlgorithm.HS256, secretKey)

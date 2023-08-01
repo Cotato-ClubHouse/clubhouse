@@ -1,8 +1,12 @@
 package clubhouse.clubhouse.domain.member.service;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import clubhouse.clubhouse.domain.member.entity.Member;
 import clubhouse.clubhouse.domain.member.exception.AppException;
@@ -41,7 +45,8 @@ public class MemberService {
 		return "회원가입에 성공했습니다.";
 	}
 
-	public String login(String email, String password) {
+	@Transactional
+	public Map<String, String> login(String email, String password) {
 		// email 없음
 		Member findMember = memberRepository.findByEmail(email)
 			.orElseThrow(() ->new AppException(ErrorCode.EMAIL_NOTFOUND, email + "이 존재하지 않습니다."));
@@ -50,8 +55,44 @@ public class MemberService {
 			throw new AppException(ErrorCode.INVAILD_PASSWORD, "패스워드가 일치하지 않습니다.");
 		}
 
-		String token = JwtUtil.createToken(findMember.getEmail(), secretKey, expiredMs);
+		String accessToken = JwtUtil.createAccessToken(findMember.getEmail(), secretKey, expiredMs);
+		String refreshToken = JwtUtil.createRefreshToken(findMember.getEmail(), secretKey, expiredMs);
+
+		findMember.updateRefreshToken(refreshToken);
+
+		Map<String, String> token = new HashMap<>();
+		token.put("accessToken", accessToken);
+		token.put("refreshToken", refreshToken);
 
 		return token;
+	}
+
+	@Transactional
+	public Map<String, String> reissue(String getRefreshToken){
+
+		if(JwtUtil.isExpired(getRefreshToken, secretKey)){
+			throw new RuntimeException("토큰 만료");
+		}
+
+		Member findMember = memberRepository.findByRefreshToken(getRefreshToken)
+			.orElseThrow(() -> new AppException(ErrorCode.MEMBER_NOTFOUND, "멤버가 존재하지 않습니다."));
+
+		String accessToken = JwtUtil.createAccessToken(findMember.getEmail(), secretKey, expiredMs);
+		String refreshToken = JwtUtil.createRefreshToken(findMember.getEmail(), secretKey, expiredMs);
+
+		findMember.updateRefreshToken(refreshToken);
+
+		Map<String, String> token = new HashMap<>();
+		token.put("accessToken", accessToken);
+		token.put("refreshToken", refreshToken);
+
+		return token;
+	}
+
+	@Transactional
+	public void logout(String email) {
+		Member findMember = memberRepository.findByEmail(email)
+			.orElseThrow(() -> new AppException(ErrorCode.MEMBER_NOTFOUND, "해당 멤버가 존재하지 않습니다."));
+		findMember.invaildRefreshToken();
 	}
 }

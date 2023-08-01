@@ -44,6 +44,9 @@ public class Member {
 	@OneToMany(mappedBy = "member")
 	private List<MemberClub> memberClubs = new ArrayList<>();
 
+	@Column(name = "refreshToken")
+	private String refreshToken;
+
 	@Builder
 	public Member(String name, String email, String password, String phone, String univ, Long age, Gender gender) {
 		this.name = name;
@@ -53,5 +56,12 @@ public class Member {
 		this.univ = univ;
 		this.age = age;
 		this.gender = gender;
+	}
+	public void updateRefreshToken(String refreshToken){
+		this.refreshToken = refreshToken;
+	}
+
+	public void invaildRefreshToken() {
+		this.refreshToken = null;
 	}
 }

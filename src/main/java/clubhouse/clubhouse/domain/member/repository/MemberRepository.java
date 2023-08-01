@@ -8,4 +8,6 @@ import clubhouse.clubhouse.domain.member.entity.Member;
 
 public interface MemberRepository extends JpaRepository<Member, Long> {
 	Optional<Member> findByEmail(String Email);
+
+	Optional<Member> findByRefreshToken(String RefreshToken);
 }
