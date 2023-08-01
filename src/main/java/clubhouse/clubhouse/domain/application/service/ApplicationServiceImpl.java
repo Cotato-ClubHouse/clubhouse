@@ -109,7 +109,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             index++;
         }
 
-        answerService.changeAnswer(application, answers)
+        answerService.changeAnswer(application, answers);
     }
 
 
