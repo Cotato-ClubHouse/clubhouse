@@ -1,6 +1,7 @@
 package clubhouse.clubhouse.domain.application.service;
 
 import clubhouse.clubhouse.domain.application.dto.*;
+import clubhouse.clubhouse.domain.application.entity.Answer;
 import clubhouse.clubhouse.domain.application.entity.Application;
 import clubhouse.clubhouse.domain.application.repository.ApplicationRepository;
 import clubhouse.clubhouse.domain.form.entity.Form;
@@ -12,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -30,8 +32,16 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     private final MemberRepository memberRepository;
 
+
+    /**
+     * TODO
+     * 지원서 작성과 수정은 시간 비교해야함
+     */
+    
+    
     //지원서 제출(사용자)
     @Override
+    @Transactional
     public void apply(ApplyRequestDto applyRequestDto) throws IllegalAccessException {
         Long formId = applyRequestDto.getForm_id();
         List<Question> questions = formService.findAllQuestions(formId); //여기서 순서 맞춰줘야함
@@ -72,9 +82,40 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     }
 
+    @Override
+    @Transactional
+    public void patchApply(ApplyRequestDto applyRequestDto, Long applicationId) throws IllegalAccessException {
+        List<String> answers = applyRequestDto.getAnswers();
+
+        //지원서 찾기
+        Application application = applicationRepository.findById(applicationId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 지원서가 없습니다"));
+
+        //멤버 찾기
+        Member member = memberRepository.findById(applyRequestDto.getMember_id())
+                .orElseThrow(() -> new IllegalArgumentException("해당 멤버가 없습니다"));
+
+        //member 같은지 확인
+        if (application.getMember() != member) {
+            throw new IllegalAccessException("본인 지원서 외는 수정할 수 없습니다");
+        }
+
+        //값이 없는 답변이 있으면 예외 처리
+        int index=1;
+        for (String answer : answers) {
+            if (answer.trim().equals("")) {
+                throw new IllegalArgumentException("입력되지 않은 질문이 있습니다("+index+"번째 칠문)");
+            }
+            index++;
+        }
+
+        answerService.changeAnswer(application, answers)
+    }
+
 
     //리스트 출력
     @Override
+    @Transactional
     public ApplyListResponseDto getApplicationList(ApplyListRequestDto requestDto) throws IllegalAccessException {
         Long formId = requestDto.getForm_id();
         log.info("getApplicationList Start");

@@ -40,4 +40,10 @@ public class Answer {
     public static Answer createAnswer(String contents, Application application, Question question) {
         return new Answer(contents, application, question);
     }
+
+    public Answer changeAnswer(String content) {
+        contents = content;
+        return this;
+    }
+
 }

@@ -30,6 +30,19 @@ public class ApplyController {
                 .body(HttpStatus.CREATED);
     }
 
+    @PatchMapping("{club_id}/apply/{application_id}")
+    public ResponseEntity<HttpStatus> patchAnswer(
+            @PathVariable("club_id") Long clubId,
+            @RequestBody ApplyRequestDto requestDto,
+            @PathVariable("application_id") Long applicationId) throws IllegalAccessException {
+        applicationService.patchApply(requestDto,applicationId);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(HttpStatus.OK);
+    }
+
+
     
     //공고 등록된 지원서들 Get(남기훈)
     @GetMapping("/{club_id}/applyList")
@@ -43,5 +56,6 @@ public class ApplyController {
                 .status(HttpStatus.OK)
                 .body(responseDto); //임시 ApplyListResponseDto
     }
+
 
 }

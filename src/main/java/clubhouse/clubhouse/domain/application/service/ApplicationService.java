@@ -7,5 +7,7 @@ import clubhouse.clubhouse.domain.application.dto.ApplyRequestDto;
 public interface ApplicationService {
     void apply(ApplyRequestDto applyRequestDto) throws IllegalAccessException;
 
+    void patchApply(ApplyRequestDto applyRequestDto, Long applicationId) throws IllegalAccessException;
+
     ApplyListResponseDto getApplicationList(ApplyListRequestDto requestDto) throws IllegalAccessException;
 }
