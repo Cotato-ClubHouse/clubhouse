@@ -47,4 +47,9 @@ public class Application {
         return new Application(localDateTime,member,form, isPass);
     }
 
+    public Application changeIsPass(boolean isPass) {
+        this.isPass = isPass;
+        return this;
+    }
+
 }

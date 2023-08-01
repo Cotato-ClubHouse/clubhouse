@@ -50,9 +50,8 @@ public class ApplicationServiceImpl implements ApplicationService {
         //해당 form 가져오기
         Form form = formService.findById(formId)
                 .orElseThrow(() -> new IllegalArgumentException("form이 없습니다"));
-        
-        Member member = memberRepository.findById(applyRequestDto.getMember_id())
-                .orElseThrow(() -> new IllegalArgumentException("해당 member가 없습니다"));//임시 데이터
+
+        Member member = findMemberById(applyRequestDto.getMember_id());
 
         //이미 지원한 신청서가 있을 때는 에러
         Optional<Application> findAlreadyExistMember = applicationRepository.findByMemberAndForm(member, form);
@@ -61,26 +60,16 @@ public class ApplicationServiceImpl implements ApplicationService {
         }
 
         //값이 없는 답변이 있으면 예외 처리
-        int index=1;
-        for (String answer : answers) {
-            if (answer.trim().equals("")) {
-                throw new IllegalArgumentException("입력되지 않은 질문이 있습니다("+index+"번째 칠문)");
-            }
-            index++;
-        }
+        checkAllAnswerInput(answers);
 
-        
         //답변이 다 있으면 지원서 만들기
         Application newApplication = applicationRepository.save(Application.createApplication(LocalDateTime.now(), member, form, false));
 
-        int i=0;
-        for (String answerContent : answers) {
-            answerService.saveAnswer(newApplication, questions.get(i), answerContent);
-            log.info("answer {}={}",questions.get(i), answerContent);
-            i++;
-        }
+        //지원서에 answer 저장
+        makeAnswer(questions, answers, newApplication);
 
     }
+
 
     @Override
     @Transactional
@@ -88,12 +77,10 @@ public class ApplicationServiceImpl implements ApplicationService {
         List<String> answers = applyRequestDto.getAnswers();
 
         //지원서 찾기
-        Application application = applicationRepository.findById(applicationId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 지원서가 없습니다"));
+        Application application = findApplicationById(applicationId);
 
         //멤버 찾기
-        Member member = memberRepository.findById(applyRequestDto.getMember_id())
-                .orElseThrow(() -> new IllegalArgumentException("해당 멤버가 없습니다"));
+        Member member = findMemberById(applyRequestDto.getMember_id());
 
         //member 같은지 확인
         if (application.getMember() != member) {
@@ -101,17 +88,32 @@ public class ApplicationServiceImpl implements ApplicationService {
         }
 
         //값이 없는 답변이 있으면 예외 처리
-        int index=1;
-        for (String answer : answers) {
-            if (answer.trim().equals("")) {
-                throw new IllegalArgumentException("입력되지 않은 질문이 있습니다("+index+"번째 칠문)");
-            }
-            index++;
-        }
+        checkAllAnswerInput(answers);
 
         answerService.changeAnswer(application, answers);
     }
 
+
+    //IsPass 바꾸기
+    @Override
+    @Transactional
+    public void changeIsPass(ApplyChangeIsPassRequestDto requestDto,Long clubId,Long applicationId) {
+        /**
+         * member_id가 클럽의 회장인지 확인해야한다 TODO
+         */
+
+
+        Application application = findApplicationById(applicationId);
+        boolean isPass = Boolean.parseBoolean(requestDto.getIs_pass());
+        Application changedApplication = application.changeIsPass(isPass);
+
+        /**
+         * true일때 club에 멤버 넣기, false일때 멤버빼기 TODO
+         */
+        //clubService.changeMemberStatus(application.getMember(), clubId, isPass);
+
+        applicationRepository.save(changedApplication);
+    }
 
     //리스트 출력
     @Override
@@ -145,5 +147,35 @@ public class ApplicationServiceImpl implements ApplicationService {
         log.info("GET ApplyList Complete");
 
         return responseDto;
+    }
+
+    private Member findMemberById(Long memberId) {
+        return memberRepository.findById(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("회원정보가 잘못됐습니다"));
+    }
+
+    private void makeAnswer(List<Question> questions, List<String> answers, Application newApplication) {
+        int i=0;
+        for (String answerContent : answers) {
+            answerService.saveAnswer(newApplication, questions.get(i), answerContent);
+            log.info("answer {}={}", questions.get(i), answerContent);
+            i++;
+        }
+    }
+
+    private void checkAllAnswerInput(List<String> answers) {
+        int index=1;
+        for (String answer : answers) {
+            if (answer.trim().equals("")) {
+                throw new IllegalArgumentException("입력되지 않은 질문이 있습니다("+index+"번째 칠문)");
+            }
+            index++;
+        }
+    }
+
+    private Application findApplicationById(Long applicationId) {
+        Application application = applicationRepository.findById(applicationId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 지원서가 없습니다"));
+        return application;
     }
 }

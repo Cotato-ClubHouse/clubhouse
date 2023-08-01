@@ -1,11 +1,8 @@
 package clubhouse.clubhouse.domain.application.controller;
 
-import clubhouse.clubhouse.domain.application.dto.ApplyListRequestDto;
-import clubhouse.clubhouse.domain.application.dto.ApplyListResponseDto;
-import clubhouse.clubhouse.domain.application.dto.ApplyRequestDto;
+import clubhouse.clubhouse.domain.application.dto.*;
 import clubhouse.clubhouse.domain.application.service.ApplicationService;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.annotations.Fetch;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +16,7 @@ public class ApplyController {
 
     //답변 데이터가 들어왔을 때 answer 저장 + application 저장(남기훈)
     @PostMapping("/{club_id}/apply")
-    public ResponseEntity<HttpStatus> saveAnswer(
+    public ResponseEntity<ApplyResponseDto> saveAnswer(
             @PathVariable("club_id") Long clubId,
             @RequestBody ApplyRequestDto requestDto) throws IllegalAccessException {
 
@@ -27,11 +24,12 @@ public class ApplyController {
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(HttpStatus.CREATED);
+                .body(new ApplyResponseDto(HttpStatus.CREATED));
     }
 
+    //공고 수정 Patch(남기훈)
     @PatchMapping("{club_id}/apply/{application_id}")
-    public ResponseEntity<HttpStatus> patchAnswer(
+    public ResponseEntity<ApplyResponseDto> patchAnswer(
             @PathVariable("club_id") Long clubId,
             @RequestBody ApplyRequestDto requestDto,
             @PathVariable("application_id") Long applicationId) throws IllegalAccessException {
@@ -39,7 +37,20 @@ public class ApplyController {
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(HttpStatus.OK);
+                .body(new ApplyResponseDto(HttpStatus.OK));
+    }
+
+    @PatchMapping("{club_id}/applyList/{application_id}")
+    public ResponseEntity<ApplyResponseDto> changeIsPass(
+            @PathVariable("club_id") Long clubId,
+            @RequestBody ApplyChangeIsPassRequestDto requestDto,
+            @PathVariable("application_id") Long applicationId){
+
+        applicationService.changeIsPass(requestDto, clubId, applicationId);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new ApplyResponseDto(HttpStatus.OK));
     }
 
 
@@ -54,7 +65,7 @@ public class ApplyController {
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(responseDto); //임시 ApplyListResponseDto
+                .body(responseDto);
     }
 
 
