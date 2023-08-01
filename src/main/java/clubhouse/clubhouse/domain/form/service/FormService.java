@@ -2,10 +2,11 @@ package clubhouse.clubhouse.domain.form.service;
 
 
 import clubhouse.clubhouse.domain.form.dto.RequestFormDto;
+import clubhouse.clubhouse.domain.form.dto.ResponseAllForm;
 import clubhouse.clubhouse.domain.form.dto.ResponseForm;
+import clubhouse.clubhouse.domain.form.dto.ResponseFormDetails;
 import clubhouse.clubhouse.domain.form.entity.Form;
-import clubhouse.clubhouse.domain.form.entity.Question;
-import org.springframework.stereotype.Service;
+
 
 import java.util.List;
 import java.util.Optional;
@@ -28,4 +29,19 @@ public interface FormService {
      */
 //    List<Question> findAllQuestions(Long formId);
 
+    /**
+     * 메인 페이지
+     * 모든 공고의 리스트 불러오기
+     * 불러올 정보: 카테고리, 사진, 모집 마감일(계산), 동아리 이름, 홍보글 초안
+     *  ToDO 모집 마감일 순으로 정렬해서 보내기 DO
+     */
+    List<ResponseAllForm> getAllFormInfo();
+
+
+    /**
+     * 공고 상세 조회
+     * 불러올 정보: 동아리 이름, 공고 제목, 공고 내용(글), 공고 사진(S3), 마감일, 마감까지 남은 기한
+     * Todo 마감일까지 남은 기한 -> 프론트에서 실시간으로? or url 새로고침할때마다 계산
+     */
+    ResponseFormDetails getFormDetails(Long formId);
 }

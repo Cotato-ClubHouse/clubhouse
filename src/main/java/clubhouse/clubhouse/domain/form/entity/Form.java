@@ -5,14 +5,17 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.DynamicInsert;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "form")
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@DynamicInsert//columndefault 설정 관련
 public class Form {
 
     @Id
@@ -36,8 +39,9 @@ public class Form {
     @JoinColumn(name = "club_id")
     private Club club;
 
-    @CreatedDate
+
     @Column(name = "form_status")
+    @ColumnDefault(value = "'RECRUITING'")
     @Enumerated(EnumType.STRING)
     private FormStatus formStatus;
 

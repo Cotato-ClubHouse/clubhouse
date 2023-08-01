@@ -2,9 +2,7 @@ package clubhouse.clubhouse.domain.form.service;
 
 import clubhouse.clubhouse.domain.club.entity.Club;
 import clubhouse.clubhouse.domain.club.repository.ClubRepository;
-import clubhouse.clubhouse.domain.form.dto.RequestFormDto;
-import clubhouse.clubhouse.domain.form.dto.RequestQuestionDto;
-import clubhouse.clubhouse.domain.form.dto.ResponseForm;
+import clubhouse.clubhouse.domain.form.dto.*;
 import clubhouse.clubhouse.domain.form.entity.Form;
 import clubhouse.clubhouse.domain.form.entity.Question;
 import clubhouse.clubhouse.domain.form.repository.FormRepository;
@@ -13,6 +11,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.Period;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -25,19 +29,13 @@ public class FormServiceImpl implements FormService {
     private final QuestionService questionService;
 //    private final QuestionRepository questionRepository;
     /**
-     * clubService로 리팩토링해야함
-     * ToDo
+     * ToDo clubService로 리팩토링해야함
      */
     private final ClubRepository clubRepository;
-
-
 
     @Override
     public ResponseForm createForm(RequestFormDto formDto) {
         Optional<Club> club = clubRepository.findById(formDto.getClubId());
-
-//        Club club = new Club();
-//        clubRepository.save(club.get());
 
         Form form = Form.builder()
                 .title(formDto.getTitle())
@@ -51,14 +49,13 @@ public class FormServiceImpl implements FormService {
         log.info("new form created");
 
         for (RequestQuestionDto quesContent :formDto.getQuesList()) {
-            //            이 작업을 createQuestion에서 해야함.
             questionService.createQuestion(quesContent,form1);
         }
 
-        ResponseForm responseForm = new ResponseForm();
-
-        responseForm.setTitle(form.getTitle());
-        responseForm.setContent(form.getContent());
+        ResponseForm responseForm = ResponseForm.builder()
+                .content(form1.getContent())
+                .title(form1.getTitle())
+                .build();
 
         return responseForm;
     }
@@ -72,5 +69,50 @@ public class FormServiceImpl implements FormService {
         return form;
     }
 
+    @Override
+    public List<ResponseAllForm> getAllFormInfo() {
+        List<Form> allForms = formRepository.findAll();
+        List<ResponseAllForm> result = new ArrayList<>();
 
+        for(Form allForm : allForms){
+            LocalDateTime currentDay = LocalDateTime.now();
+            LocalDateTime endDay = allForm.getDeadline();
+
+            Long remainDays = ChronoUnit.DAYS.between(currentDay,endDay);
+
+            ResponseAllForm responseAllForm = ResponseAllForm.builder()
+                    .formStatus(allForm.getFormStatus())
+                    .categoryName(allForm.getClub().getCategoryName())
+                    .clubName(allForm.getClub().getName())
+                    .remainDay(remainDays)
+                    .content(allForm.getContent())
+                    .build();
+            result.add(responseAllForm);
+        }
+        return result;
+    }
+
+    @Override
+    public ResponseFormDetails getFormDetails(Long formId) {
+        Form form = formRepository.findById(formId).get();
+        Optional<Club> club = clubRepository.findById(form.getClub().getId());
+
+
+        LocalDateTime currentDay = LocalDateTime.now();
+        LocalDateTime endDay = form.getDeadline();
+
+        Long remainDays = ChronoUnit.DAYS.between(currentDay,endDay);
+
+        ResponseFormDetails result = ResponseFormDetails.builder()
+                .title(form.getTitle())
+                .content(form.getContent())
+                .deadLine(form.getDeadline())
+                .photoUrl(form.getPhotoUrl())
+                .clubName(club.get().getName())
+                .categoryName(club.get().getCategoryName())
+                .remainDays(remainDays)
+                .build();
+
+        return result;
+    }
 }
