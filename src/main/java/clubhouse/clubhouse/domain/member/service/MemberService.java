@@ -3,16 +3,17 @@ package clubhouse.clubhouse.domain.member.service;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import clubhouse.clubhouse.domain.member.entity.Member;
+import clubhouse.clubhouse.domain.member.entity.MemberJoinRequest;
 import clubhouse.clubhouse.domain.member.exception.AppException;
 import clubhouse.clubhouse.domain.member.exception.ErrorCode;
 import clubhouse.clubhouse.domain.member.repository.MemberRepository;
 import clubhouse.clubhouse.utils.JwtUtil;
+import clubhouse.clubhouse.utils.Token;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -23,21 +24,23 @@ public class MemberService {
 
 	private final BCryptPasswordEncoder encoder;
 
-	@Value("${JWT_SECRET_KEY}")
-	private String secretKey;
+	private final JwtUtil jwtUtil;
 
-	private Long expiredMs = 1000 * 60 * 60L;
-
-	public String join(String email, String password){
+	public String join(MemberJoinRequest memberJoinRequest){
 		//중복 체크
-		memberRepository.findByEmail(email)
+		memberRepository.findByEmail(memberJoinRequest.getEmail())
 			.ifPresent(member -> {
-				throw new AppException(ErrorCode.EMAIL_DUPLICATED, email + "는 이미 존재하는 이메일입니다.");
+				throw new AppException(ErrorCode.EMAIL_DUPLICATED, memberJoinRequest.getEmail() + "는 이미 존재하는 이메일입니다.");
 			});
 
 		Member newMember = Member.builder()
-			.email(email)
-			.password(encoder.encode(password))
+			.name(memberJoinRequest.getName())
+			.email(memberJoinRequest.getEmail())
+			.password(encoder.encode(memberJoinRequest.getPassword()))
+			.phone(memberJoinRequest.getPhone())
+			.univ(memberJoinRequest.getUniv())
+			.age(memberJoinRequest.getAge())
+			.gender(memberJoinRequest.getGender())
 			.build();
 
 		memberRepository.save(newMember);
@@ -46,7 +49,7 @@ public class MemberService {
 	}
 
 	@Transactional
-	public Map<String, String> login(String email, String password) {
+	public Token login(String email, String password) {
 		// email 없음
 		Member findMember = memberRepository.findByEmail(email)
 			.orElseThrow(() ->new AppException(ErrorCode.EMAIL_NOTFOUND, email + "이 존재하지 않습니다."));
@@ -55,36 +58,25 @@ public class MemberService {
 			throw new AppException(ErrorCode.INVAILD_PASSWORD, "패스워드가 일치하지 않습니다.");
 		}
 
-		String accessToken = JwtUtil.createAccessToken(findMember.getEmail(), secretKey, expiredMs);
-		String refreshToken = JwtUtil.createRefreshToken(findMember.getEmail(), secretKey, expiredMs);
-
-		findMember.updateRefreshToken(refreshToken);
-
-		Map<String, String> token = new HashMap<>();
-		token.put("accessToken", accessToken);
-		token.put("refreshToken", refreshToken);
+		Token token = jwtUtil.createToken(email);
+		findMember.updateRefreshToken(token.getRefreshToken());
 
 		return token;
 	}
 
 	@Transactional
-	public Map<String, String> reissue(String getRefreshToken){
+	public Token reissue(String refreshToken){
 
-		if(JwtUtil.isExpired(getRefreshToken, secretKey)){
+		if(jwtUtil.isExpired(refreshToken)){
 			throw new RuntimeException("토큰 만료");
 		}
 
-		Member findMember = memberRepository.findByRefreshToken(getRefreshToken)
+		Member findMember = memberRepository.findByRefreshToken(refreshToken)
 			.orElseThrow(() -> new AppException(ErrorCode.MEMBER_NOTFOUND, "멤버가 존재하지 않습니다."));
 
-		String accessToken = JwtUtil.createAccessToken(findMember.getEmail(), secretKey, expiredMs);
-		String refreshToken = JwtUtil.createRefreshToken(findMember.getEmail(), secretKey, expiredMs);
+		Token token = jwtUtil.createToken(findMember.getEmail());
 
-		findMember.updateRefreshToken(refreshToken);
-
-		Map<String, String> token = new HashMap<>();
-		token.put("accessToken", accessToken);
-		token.put("refreshToken", refreshToken);
+		findMember.updateRefreshToken(token.getRefreshToken());
 
 		return token;
 	}

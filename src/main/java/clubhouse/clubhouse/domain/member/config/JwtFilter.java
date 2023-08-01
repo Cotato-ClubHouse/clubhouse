@@ -23,15 +23,18 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class JwtFilter extends OncePerRequestFilter {
 
-	private final MemberService memberService;
 	private final String secretKey;
+
+	private final JwtUtil jwtUtil;
+
 	@Override
-	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
+		FilterChain filterChain) throws ServletException, IOException {
 
 		final String authorization = request.getHeader(HttpHeaders.AUTHORIZATION);
 		log.info("authorization = {}", authorization);
 
-		if(authorization == null || !authorization.startsWith("Bearer ")){
+		if (authorization == null || !authorization.startsWith("Bearer ")) {
 			log.error("authorization을 잘못 보냈습니다.");
 			filterChain.doFilter(request, response);
 			return;
@@ -39,13 +42,13 @@ public class JwtFilter extends OncePerRequestFilter {
 
 		String token = authorization.split(" ")[1];
 
-		if(JwtUtil.isExpired(token, secretKey)){
+		if (jwtUtil.isExpired(token)) {
 			log.error("Token이 만료 되었습니다.");
 			filterChain.doFilter(request, response);
 			return;
 		}
 
-		String email = JwtUtil.getEmail(token, secretKey);
+		String email = jwtUtil.getEmail(token);
 		log.info("email = {}", email);
 
 		UsernamePasswordAuthenticationToken authenticationToken =

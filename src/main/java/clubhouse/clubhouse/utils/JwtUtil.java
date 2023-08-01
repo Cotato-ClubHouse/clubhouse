@@ -2,37 +2,62 @@ package clubhouse.clubhouse.utils;
 
 import java.util.Date;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import lombok.Getter;
 
+@Component
+@Getter
 public class JwtUtil {
 
-	public static boolean isExpired(String token, String secretKey){
-		return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getExpiration().before(new Date());
+	@Value("${jwt.secretKey}")
+	String secretKey;
+	@Value("${jwt.access.expiration}")
+	Long accessTokenExpiration;
+	@Value("${jwt.refresh.expiration}")
+	Long refreshTokenExpiration;
+
+	public boolean isExpired(String token) {
+		return Jwts.parser()
+			.setSigningKey(secretKey)
+			.parseClaimsJws(token)
+			.getBody()
+			.getExpiration()
+			.before(new Date());
 	}
 
-	public static String getEmail(String token, String secretKey){
+	public String getEmail(String token) {
 		return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token)
 			.getBody().get("email", String.class);
 	}
 
-	public static String createAccessToken(String email, String secretKey, long expiredTimeMs){
+	public Token createToken(String email) {
+		return Token.builder()
+			.accessToken(createAccessToken(email))
+			.refreshToken(createRefreshToken())
+			.build();
+	}
+
+	private String createAccessToken(String email) {
 		Claims claims = Jwts.claims();
 		claims.put("email", email);
 
 		return Jwts.builder()
 			.setClaims(claims)
 			.setIssuedAt(new Date(System.currentTimeMillis()))
-			.setExpiration(new Date(System.currentTimeMillis() + expiredTimeMs))
+			.setExpiration(new Date(System.currentTimeMillis() + 3600000))
 			.signWith(SignatureAlgorithm.HS256, secretKey)
 			.compact();
 	}
 
-	public static String createRefreshToken(String email, String secretKey, long expiredTimeMs){
+	private String createRefreshToken() {
 		return Jwts.builder()
 			.setIssuedAt(new Date(System.currentTimeMillis()))
-			.setExpiration(new Date(System.currentTimeMillis() + expiredTimeMs))
+			.setExpiration(new Date(System.currentTimeMillis() + refreshTokenExpiration))
 			.signWith(SignatureAlgorithm.HS256, secretKey)
 			.compact();
 	}

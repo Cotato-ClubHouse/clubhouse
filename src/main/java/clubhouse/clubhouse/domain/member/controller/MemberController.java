@@ -1,7 +1,5 @@
 package clubhouse.clubhouse.domain.member.controller;
 
-import java.util.Map;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -13,8 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 import clubhouse.clubhouse.domain.member.entity.MemberJoinRequest;
 import clubhouse.clubhouse.domain.member.entity.MemberLoginRequest;
 import clubhouse.clubhouse.domain.member.service.MemberService;
+import clubhouse.clubhouse.utils.Token;
 import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,18 +27,18 @@ public class MemberController {
 
 	@PostMapping("/join")
 	public ResponseEntity<?> join(@RequestBody MemberJoinRequest memberJoinRequest) {
-		String result = memberService.join(memberJoinRequest.getEmail(), memberJoinRequest.getPassword());
+		String result = memberService.join(memberJoinRequest);
 		return ResponseEntity.ok().body(result);
 	}
 
 	@PostMapping("/login")
 	public ResponseEntity<?> login(@RequestBody MemberLoginRequest memberLoginRequest,
 		HttpServletResponse httpServletResponse) {
-		Map<String, String> result = memberService.login(memberLoginRequest.getEmail(),
+		Token token = memberService.login(memberLoginRequest.getEmail(),
 			memberLoginRequest.getPassword());
-		httpServletResponse.addHeader("accessToken", result.get("accessToken"));
+		httpServletResponse.addHeader("accessToken", token.getAccessToken());
 
-		Cookie cookie = new Cookie("refreshToken", result.get("refreshToken"));
+		Cookie cookie = new Cookie("refreshToken", token.getRefreshToken());
 		cookie.setPath("/");
 		cookie.setMaxAge(3000000);
 		cookie.isHttpOnly();
@@ -60,10 +58,10 @@ public class MemberController {
 		}
 
 		log.info("refreshToken = {}", refreshToken);
-		Map<String, String> result = memberService.reissue(refreshToken);
-		httpServletResponse.addHeader("accessToken", result.get("accessToken"));
+		Token token = memberService.reissue(refreshToken);
+		httpServletResponse.addHeader("accessToken", token.getAccessToken());
 
-		Cookie cookie = new Cookie("refreshToken", result.get("refreshToken"));
+		Cookie cookie = new Cookie("refreshToken", token.getRefreshToken());
 		cookie.setPath("/");
 		cookie.setMaxAge(60 * 60 * 24);
 		cookie.isHttpOnly();
