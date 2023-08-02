@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 public class Club {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,5 +30,17 @@ public class Club {
 
 	@OneToMany(mappedBy = "club")
 	private List<MemberClub> memberClubs = new ArrayList<>();
+
+	public Club(String name, CategoryName categoryName) {
+		this.name = name;
+		this.categoryName = categoryName;
+	}
+
+	//	public Club(Long id, String name, Long adminId, CategoryName categoryName){
+//		this.id = id;
+//		this.name = name;
+//		this.adminId = adminId;
+//		this.categoryName = categoryName;
+//	}
 
 }
