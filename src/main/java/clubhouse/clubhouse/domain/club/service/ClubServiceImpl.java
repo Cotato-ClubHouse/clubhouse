@@ -15,7 +15,7 @@ public class ClubServiceImpl implements ClubService {
 
     public Club saveClub(ClubRequestDto requestDto) {
         if (!clubRepository.existsByName(requestDto.getClubName())) {
-            Club club = new Club(requestDto.getClubName(), requestDto.getCategoryName());
+            Club club = new Club(requestDto.getClubName(), requestDto.getCategoryName(), requestDto.getClubAdminId(), requestDto.getClubIntro());
             return clubRepository.save(club);
         }
         else return null;

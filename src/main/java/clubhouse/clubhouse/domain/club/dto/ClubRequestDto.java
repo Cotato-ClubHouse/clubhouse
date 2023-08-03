@@ -13,4 +13,6 @@ import lombok.NoArgsConstructor;
 public class ClubRequestDto {
     String clubName;
     CategoryName categoryName;
+    String clubAdminId;
+    String clubIntro;
 }
