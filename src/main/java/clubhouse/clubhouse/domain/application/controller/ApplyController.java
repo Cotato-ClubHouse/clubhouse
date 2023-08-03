@@ -33,7 +33,7 @@ public class ApplyController {
             @PathVariable("club_id") Long clubId,
             @RequestBody ApplyRequestDto requestDto,
             @PathVariable("application_id") Long applicationId) throws IllegalAccessException {
-        applicationService.patchApply(requestDto,applicationId);
+        applicationService.patchApply(requestDto, applicationId);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -44,7 +44,7 @@ public class ApplyController {
     public ResponseEntity<ApplyResponseDto> changeIsPass(
             @PathVariable("club_id") Long clubId,
             @RequestBody ApplyChangeIsPassRequestDto requestDto,
-            @PathVariable("application_id") Long applicationId){
+            @PathVariable("application_id") Long applicationId) {
 
         applicationService.changeIsPass(requestDto, clubId, applicationId);
 
@@ -54,12 +54,11 @@ public class ApplyController {
     }
 
 
-    
     //공고 등록된 지원서들 Get(남기훈)
     @GetMapping("/{club_id}/applyList")
     public ResponseEntity<ApplyListResponseDto> getApplyList(
             @PathVariable("club_id") Long clubId,
-            @RequestBody ApplyListRequestDto requestDto) throws IllegalAccessException{
+            @RequestBody ApplyListRequestDto requestDto) throws IllegalAccessException {
 
         ApplyListResponseDto responseDto = applicationService.getApplicationList(requestDto);
 
@@ -68,5 +67,15 @@ public class ApplyController {
                 .body(responseDto);
     }
 
+
+    @GetMapping("/mypage")
+    public ResponseEntity<MyPageResponseDto> getUserApplyList(
+            @RequestBody MyPageRequestDto requestDto){
+        MyPageResponseDto responseDto = applicationService.getMyPage(requestDto);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(responseDto);
+    }
 
 }

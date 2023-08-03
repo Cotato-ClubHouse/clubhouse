@@ -150,9 +150,38 @@ public class ApplicationServiceImpl implements ApplicationService {
         return responseDto;
     }
 
+    //myPage 정보 가져오기
+    @Override
+    public MyPageResponseDto getMyPage(MyPageRequestDto requestDto) {
+
+        Member member = findMemberByEmail(requestDto.getMemberEmail());
+
+        MyPageResponseDto responseDto = new MyPageResponseDto();
+        responseDto.setMemberName(member.getName());
+        responseDto.setSimpleIntroduction(member.getUniv()); //학과 추가돼면 바꿔야함 TODO
+
+        List<Application> applicationList = applicationRepository.findAllByMember(member);
+
+        List<UserApplyListForm> applyListFormList = new ArrayList<>();
+        for (Application application : applicationList) {
+            Form form = application.getForm();
+            String clubName = form.getClub().getName();
+            applyListFormList.add(new UserApplyListForm(clubName, application.getId()));
+        }
+
+        responseDto.setApplicationList(applyListFormList);
+
+        return responseDto;
+    }
+
     private Member findMemberById(Long memberId) {
         return memberRepository.findById(memberId)
                 .orElseThrow(() -> new IllegalArgumentException("회원정보가 잘못됐습니다"));
+    }
+
+    private Member findMemberByEmail(String memberEmail) {
+        return memberRepository.findByEmail(memberEmail)
+                .orElseThrow(()-> new IllegalArgumentException("회원정보가 잘못됐습니다"));
     }
 
     private void makeAnswer(List<Question> questions, List<String> answers, Application newApplication) {
