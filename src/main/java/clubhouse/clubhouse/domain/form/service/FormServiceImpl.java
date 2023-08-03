@@ -4,16 +4,15 @@ import clubhouse.clubhouse.domain.club.entity.Club;
 import clubhouse.clubhouse.domain.club.repository.ClubRepository;
 import clubhouse.clubhouse.domain.form.dto.*;
 import clubhouse.clubhouse.domain.form.entity.Form;
-import clubhouse.clubhouse.domain.form.entity.Question;
 import clubhouse.clubhouse.domain.form.repository.FormRepository;
+import clubhouse.clubhouse.global.S3.S3Uploader;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Duration;
+import java.io.IOException;
 import java.time.LocalDateTime;
-import java.time.Period;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +24,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class FormServiceImpl implements FormService {
 
+    private final S3Uploader s3Uploader;
     private final FormRepository formRepository;
     private final QuestionService questionService;
 //    private final QuestionRepository questionRepository;
@@ -34,15 +34,21 @@ public class FormServiceImpl implements FormService {
     private final ClubRepository clubRepository;
 
     @Override
-    public ResponseForm createForm(RequestFormDto formDto) {
+    public ResponseForm createForm(RequestFormDto formDto) throws IOException {
         Optional<Club> club = clubRepository.findById(formDto.getClubId());
+
+        log.info("form service");
+        String imageUrl = null;
+        if(!(formDto.getFormImage().isEmpty())){
+            imageUrl=s3Uploader.uploadFiles(formDto.getFormImage(),"form");
+        }
 
         Form form = Form.builder()
                 .title(formDto.getTitle())
                 .content(formDto.getContent())
                 .club(club.get())
                 .deadline(formDto.getDeadLine())
-                .photoUrl(formDto.getPhotoUrl())
+                .photoUrl(imageUrl)
                 .build();
 
         Form form1 = formRepository.save(form);// 공고 생성완료
@@ -85,6 +91,7 @@ public class FormServiceImpl implements FormService {
                     .categoryName(allForm.getClub().getCategoryName())
                     .clubName(allForm.getClub().getName())
                     .remainDay(remainDays)
+                    .photoUrl(allForm.getPhotoUrl())
                     .content(allForm.getContent())
                     .build();
             result.add(responseAllForm);
@@ -97,6 +104,7 @@ public class FormServiceImpl implements FormService {
         Form form = formRepository.findById(formId).get();
         Optional<Club> club = clubRepository.findById(form.getClub().getId());
 
+        log.info("formPhotoUrl {}",form.getPhotoUrl());
 
         LocalDateTime currentDay = LocalDateTime.now();
         LocalDateTime endDay = form.getDeadline();
@@ -114,5 +122,13 @@ public class FormServiceImpl implements FormService {
                 .build();
 
         return result;
+    }
+
+    @Override
+    public void deleteForm(Long formId) {
+
+        questionService.deleteAllQuesByFormId(formId);
+        formRepository.deleteById(formId);
+
     }
 }

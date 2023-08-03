@@ -10,4 +10,6 @@ public interface QuestionService {
 
     Question createQuestion(RequestQuestionDto question, Form form);
     List<Question> findAllQuesByFormId(Long formId);
+
+    void deleteAllQuesByFormId(Long formId);
 }

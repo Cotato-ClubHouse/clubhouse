@@ -11,4 +11,5 @@ public interface QuestionRepository extends JpaRepository<Question,Long> {
     List<Question> findAllByFormId(Long formId);
 
 //    List<Question> findAllOrderByQuestionNumDesc();
+    void deleteAllByFormId(Long formId);
 }

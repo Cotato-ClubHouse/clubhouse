@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,12 +40,12 @@ public class FormController {
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
-    @PostMapping("/create")
-    public ResponseEntity<ResponseForm> createForm(@RequestBody RequestFormDto formDto){
+    @PostMapping(value = "/create",consumes = "multipart/form-data")
+    public ResponseEntity<ResponseForm> createForm(@ModelAttribute RequestFormDto formDto) throws IOException {
 
         //formDto 를 바탕으로 새 form을 생성하고 저장하는 api
         ResponseForm form = formService.createForm(formDto);
-
+        log.info("form controller");
         return ResponseEntity.status(HttpStatus.CREATED).body(form);
     }
 
@@ -55,6 +56,14 @@ public class FormController {
 
         return ResponseEntity.status(HttpStatus.OK).body(result);
 
+    }
+
+
+    @DeleteMapping("/{formId}")
+    public ResponseEntity<Long> deleteForm(@PathVariable("formId") Long formId){
+        formService.deleteForm(formId);
+
+        return ResponseEntity.status(HttpStatus.OK).body(formId);
     }
 
 }

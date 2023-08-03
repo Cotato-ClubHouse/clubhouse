@@ -17,15 +17,12 @@ public class Question {
     @Column(name = "question_content")
     private String contents;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     @JoinColumn(name = "form_id")
     private Form form;
 
     @Column(name = "question_num")
     private Long questionNum;
-
-
-
 
     @Builder
     public Question(String contents, Form form,Long questionNum){

@@ -36,4 +36,10 @@ public class QuestionServiceImpl implements QuestionService{
     public List<Question> findAllQuesByFormId(Long formId) {
         return null;
     }
+
+
+    @Override
+    public void deleteAllQuesByFormId(Long formId) {
+        questionRepository.deleteAllByFormId(formId);
+    }
 }
