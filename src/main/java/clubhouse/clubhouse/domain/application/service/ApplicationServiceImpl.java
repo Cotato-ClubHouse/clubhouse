@@ -5,6 +5,7 @@ import clubhouse.clubhouse.domain.application.entity.Answer;
 import clubhouse.clubhouse.domain.application.entity.Application;
 import clubhouse.clubhouse.domain.application.repository.ApplicationRepository;
 import clubhouse.clubhouse.domain.form.entity.Form;
+import clubhouse.clubhouse.domain.form.entity.FormStatus;
 import clubhouse.clubhouse.domain.form.entity.Question;
 import clubhouse.clubhouse.domain.form.service.FormService;
 import clubhouse.clubhouse.domain.member.MemberRepository;
@@ -32,12 +33,6 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     private final MemberRepository memberRepository;
 
-
-    /**
-     * TODO
-     * 지원서 작성과 수정은 시간 비교해야함
-     */
-    
     
     //지원서 제출(사용자)
     @Override
@@ -50,6 +45,8 @@ public class ApplicationServiceImpl implements ApplicationService {
         //해당 form 가져오기
         Form form = formService.findById(formId)
                 .orElseThrow(() -> new IllegalArgumentException("form이 없습니다"));
+
+        checkFormStatusClose(form);
 
         Member member = findMemberById(applyRequestDto.getMember_id());
 
@@ -71,6 +68,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
 
+    //지원서 수정
     @Override
     @Transactional
     public void patchApply(ApplyRequestDto applyRequestDto, Long applicationId) throws IllegalAccessException {
@@ -78,6 +76,9 @@ public class ApplicationServiceImpl implements ApplicationService {
 
         //지원서 찾기
         Application application = findApplicationById(applicationId);
+        
+        //이미 지난 공고인지 확인
+        checkFormStatusClose(application.getForm());
 
         //멤버 찾기
         Member member = findMemberById(applyRequestDto.getMember_id());
@@ -101,7 +102,6 @@ public class ApplicationServiceImpl implements ApplicationService {
         /**
          * member_id가 클럽의 회장인지 확인해야한다 TODO
          */
-
 
         Application application = findApplicationById(applicationId);
         boolean isPass = Boolean.parseBoolean(requestDto.getIs_pass());
@@ -143,6 +143,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             responseFormList.add(applyForm);
 
         }
+        responseDto.setFormName(form.getTitle());
         responseDto.setApplication_list(responseFormList);
         log.info("GET ApplyList Complete");
 
@@ -177,5 +178,12 @@ public class ApplicationServiceImpl implements ApplicationService {
         Application application = applicationRepository.findById(applicationId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 지원서가 없습니다"));
         return application;
+    }
+
+
+    private static void checkFormStatusClose(Form form) throws IllegalAccessException {
+        if (form.getFormStatus()== FormStatus.CLOSING) {
+            throw new IllegalAccessException("종료됐습니다");
+        }
     }
 }

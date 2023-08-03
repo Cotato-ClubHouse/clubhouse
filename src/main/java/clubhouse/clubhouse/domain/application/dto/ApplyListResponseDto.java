@@ -8,6 +8,7 @@ import java.util.List;
 
 @Data
 public class ApplyListResponseDto {
+    String formName;
 
     HttpStatus httpStatus;
     List<ApplyListResponseForm> application_list;
