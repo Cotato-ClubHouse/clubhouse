@@ -79,7 +79,7 @@ public class ApplyController {
     }
 
     //사용자가 수정하는 지원서 세부내용
-    @GetMapping("/mypage/getApplicationDetail")
+    @GetMapping("/mypage/getApplicationEditDetail")
     public ResponseEntity<ApplicationDetailResponseDto> getApplicationDetail(
             @RequestBody ApplicationDetailRequestDto requestDto) throws IllegalAccessException {
         ApplicationDetailResponseDto responseDto = new ApplicationDetailResponseDto();
