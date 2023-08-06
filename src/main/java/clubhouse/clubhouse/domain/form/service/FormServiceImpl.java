@@ -20,7 +20,7 @@ import java.util.Optional;
 
 @Slf4j
 @Service
-@Transactional
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class FormServiceImpl implements FormService {
 
@@ -34,6 +34,7 @@ public class FormServiceImpl implements FormService {
     private final ClubRepository clubRepository;
 
     @Override
+    @Transactional
     public ResponseForm createForm(RequestFormDto formDto) throws IOException {
         Optional<Club> club = clubRepository.findById(formDto.getClubId());
 
@@ -125,10 +126,39 @@ public class FormServiceImpl implements FormService {
     }
 
     @Override
+    @Transactional
     public void deleteForm(Long formId) {
 
         questionService.deleteAllQuesByFormId(formId);
         formRepository.deleteById(formId);
 
+    }
+
+    @Override
+    @Transactional
+    public ResponsePatchForm patchForm(Long formId, RequestPatchForm requestPatchForm) {
+        Optional<Form> form = formRepository.findById(formId);
+        Form formValue = form.get();
+        
+        if(requestPatchForm.getTitle()==null){
+            requestPatchForm.setTitle(formValue.getTitle());
+        }
+        if(requestPatchForm.getContent()==null){
+            requestPatchForm.setContent(formValue.getContent());
+        }
+        if(requestPatchForm.getFormStatus()==null){
+            requestPatchForm.setFormStatus(formValue.getFormStatus());
+        }
+        
+        form.get().update(requestPatchForm.getTitle(),requestPatchForm.getContent(),requestPatchForm.getFormStatus());
+
+        //반환값만들기
+        ResponsePatchForm returnValue = ResponsePatchForm.builder()
+                .title(form.get().getTitle())
+                .content(form.get().getContent())
+                .formStatus(form.get().getFormStatus())
+                .build();
+
+        return returnValue;
     }
 }

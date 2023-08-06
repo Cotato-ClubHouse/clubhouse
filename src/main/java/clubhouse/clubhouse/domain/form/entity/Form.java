@@ -55,6 +55,12 @@ public class Form {
     }
 
 
+    public void update(String title,String content,FormStatus formStatus){
+        this.title = title;
+        this.content=content;
+        this.formStatus=formStatus;
+    }
+
 
 
 }

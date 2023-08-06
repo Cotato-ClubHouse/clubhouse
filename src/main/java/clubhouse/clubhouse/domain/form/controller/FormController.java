@@ -1,9 +1,6 @@
 package clubhouse.clubhouse.domain.form.controller;
 
-import clubhouse.clubhouse.domain.form.dto.RequestFormDto;
-import clubhouse.clubhouse.domain.form.dto.ResponseAllForm;
-import clubhouse.clubhouse.domain.form.dto.ResponseForm;
-import clubhouse.clubhouse.domain.form.dto.ResponseFormDetails;
+import clubhouse.clubhouse.domain.form.dto.*;
 import clubhouse.clubhouse.domain.form.service.FormService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -65,5 +62,13 @@ public class FormController {
 
         return ResponseEntity.status(HttpStatus.OK).body(formId);
     }
+
+    @PatchMapping("/{formId}")
+    public ResponseEntity<ResponsePatchForm> patchForm(@PathVariable("formId")Long formId,
+                                                       @RequestBody RequestPatchForm requestPatchForm){
+        ResponsePatchForm responsePatchForm = formService.patchForm(formId, requestPatchForm);
+        return ResponseEntity.status(HttpStatus.OK).body(responsePatchForm);
+    }
+
 
 }

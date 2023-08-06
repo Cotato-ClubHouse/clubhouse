@@ -1,10 +1,7 @@
 package clubhouse.clubhouse.domain.form.service;
 
 
-import clubhouse.clubhouse.domain.form.dto.RequestFormDto;
-import clubhouse.clubhouse.domain.form.dto.ResponseAllForm;
-import clubhouse.clubhouse.domain.form.dto.ResponseForm;
-import clubhouse.clubhouse.domain.form.dto.ResponseFormDetails;
+import clubhouse.clubhouse.domain.form.dto.*;
 import clubhouse.clubhouse.domain.form.entity.Form;
 
 
@@ -56,11 +53,12 @@ public interface FormService {
     /**
      * 공고 수정
      * patch-> 원하는 항목 수정
-     * 제목, 홍보글, 마감일, 사진 수정?, 질문 수정 및 추가?
+     * 제목, 홍보글, 마감일, 사진 수정?
      */
-
+    ResponsePatchForm patchForm(Long formId,RequestPatchForm requestPatchForm);
 
     /**
      * 공고에 필요한 질문 추가?
+     * 넣지말자~
      */
 }
