@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 
 
 import java.time.LocalDateTime;
-import java.util.Map;
 
 @Entity
 @Table(name = "application")

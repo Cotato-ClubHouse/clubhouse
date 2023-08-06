@@ -43,8 +43,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         List<String> answers = applyRequestDto.getAnswers();
         
         //해당 form 가져오기
-        Form form = formService.findById(formId)
-                .orElseThrow(() -> new IllegalArgumentException("form이 없습니다"));
+        Form form = findFormById(formId);
 
         checkFormStatusClose(form);
 
@@ -119,7 +118,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     //리스트 출력
     @Override
     @Transactional
-    public ApplyListResponseDto getApplicationList(ApplyListRequestDto requestDto) throws IllegalAccessException {
+    public ApplyListResponseDto getApplicationList(ApplyListRequestDto requestDto) {
         Long formId = requestDto.getFormId();
         log.info("getApplicationList Start");
 
@@ -160,7 +159,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
         MyPageResponseDto responseDto = new MyPageResponseDto();
         responseDto.setMemberName(member.getName());
-        responseDto.setSimpleIntroduction(member.getUniv()); //학과 추가돼면 바꿔야함 TODO
+        responseDto.setSimpleIntroduction(member.getUniv()+" "+"MAJOR"); //학과 추가돼면 바꿔야함 TODO
 
         List<Application> applicationList = applicationRepository.findAllByMember(member);
 
@@ -194,9 +193,9 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     //동아리 회장이 신청서의 세부목록을 보여준다
     @Override
-    public ApplicationEditDetailResponseDto getApplicationDetail(ApplicationEditDetailRequestDto requestDto, ApplicationEditDetailResponseDto responseDto) throws IllegalAccessException {
+    public ApplicationEditDetailResponseDto getApplicationDetail(ApplicationEditDetailRequestDto requestDto, ApplicationEditDetailResponseDto responseDto){
         /**
-         * member_id가 클럽의 회장인지 확인해야한다 TODO
+         * memberEmail이 클럽의 회장인지 확인해야한다 TODO
          */
 
         Application application = findApplicationById(requestDto.getApplicationId());
@@ -216,7 +215,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     //질문 리스트 출력
     @Override
-    public ApplicationDetailResponseDto getFormQuestion(ApplicationDetailRequestDto requestDto, ApplicationDetailResponseDto responseDto, Long clubId) throws IllegalAccessException {
+    public ApplicationDetailResponseDto getFormQuestion(ApplicationDetailRequestDto requestDto, ApplicationDetailResponseDto responseDto, Long clubId) {
         //멤버가 클럽에 속해있는지 확인해야한다. TODO
 
         List<String> questionContentList = new ArrayList<>();
@@ -246,11 +245,6 @@ public class ApplicationServiceImpl implements ApplicationService {
         qnaList.add(qna);
     }
 
-    private Member findMemberById(Long memberId) {
-        return memberRepository.findById(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("회원정보가 잘못됐습니다"));
-    }
-
     private Member findMemberByEmail(String memberEmail) {
         return memberRepository.findByEmail(memberEmail)
                 .orElseThrow(()-> new IllegalArgumentException("회원정보가 잘못됐습니다"));
@@ -276,9 +270,8 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     private Application findApplicationById(Long applicationId) {
-        Application application = applicationRepository.findById(applicationId)
+        return applicationRepository.findById(applicationId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 지원서가 없습니다"));
-        return application;
     }
 
 
