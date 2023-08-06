@@ -14,6 +14,20 @@ public class ApplyController {
 
     private final ApplicationService applicationService;
 
+    //처음 답변 작성하는 폼
+    @GetMapping("/{club_id}/apply")
+    public ResponseEntity<ApplicationDetailResponseDto> getApplicationDetail(
+            @RequestBody ApplicationDetailRequestDto requestDto,
+            @PathVariable("club_id") Long clubId) throws IllegalAccessException {
+        ApplicationDetailResponseDto responseDto = new ApplicationDetailResponseDto();
+        responseDto = applicationService.getFormQuestion(requestDto, responseDto, clubId);
+        responseDto.setClubId(clubId);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(responseDto);
+    }
+
     //답변 데이터가 들어왔을 때 answer 저장 + application 저장(남기훈)
     @PostMapping("/{club_id}/apply")
     public ResponseEntity<ApplyResponseDto> saveAnswer(
@@ -25,6 +39,19 @@ public class ApplyController {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(new ApplyResponseDto(HttpStatus.CREATED));
+    }
+
+    //공고 수정하는 지원서 세부내용 GET
+    @GetMapping("/mypage/getApplicationEditDetail")
+    public ResponseEntity<ApplicationEditDetailResponseDto> getApplicationEditDetail(
+            @RequestBody ApplicationEditDetailRequestDto requestDto) throws IllegalAccessException {
+        ApplicationEditDetailResponseDto responseDto = new ApplicationEditDetailResponseDto();
+        responseDto.setEditable(true);
+        responseDto = applicationService.getApplicationEditDetail(requestDto, responseDto);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(responseDto);
     }
 
     //공고 수정 Patch(남기훈)
@@ -40,6 +67,9 @@ public class ApplyController {
                 .body(new ApplyResponseDto(HttpStatus.OK));
     }
 
+
+
+    //지원자의 상태를 변경
     @PatchMapping("{club_id}/applyList/{application_id}")
     public ResponseEntity<ApplyResponseDto> changeIsPass(
             @PathVariable("club_id") Long clubId,
@@ -54,7 +84,7 @@ public class ApplyController {
     }
 
 
-    //공고 등록된 지원서들 Get(남기훈)
+    //공고 등록된 전체 지원서들 Get(남기훈)
     @GetMapping("/{club_id}/applyList")
     public ResponseEntity<ApplyListResponseDto> getApplyList(
             @PathVariable("club_id") Long clubId,
@@ -67,7 +97,22 @@ public class ApplyController {
                 .body(responseDto);
     }
 
+    //동아리 회장이 application 세부사항 보기
+    @GetMapping("/{club_id}/applyDetail")
+    public ResponseEntity<ApplicationEditDetailResponseDto> getApplyList(
+            @PathVariable("club_id") Long clubId,
+            @RequestBody ApplicationEditDetailRequestDto requestDto) throws IllegalAccessException {
+        ApplicationEditDetailResponseDto responseDto = new ApplicationEditDetailResponseDto();
+        responseDto.setEditable(false);
+        applicationService.getApplicationDetail(requestDto, responseDto);
 
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(responseDto);
+    }
+
+
+    //My Page
     @GetMapping("/mypage")
     public ResponseEntity<MyPageResponseDto> getUserApplyList(
             @RequestBody MyPageRequestDto requestDto) {
@@ -78,31 +123,4 @@ public class ApplyController {
                 .body(responseDto);
     }
 
-
-    //사용자가 수정하는 지원서 세부내용
-    @GetMapping("/mypage/getApplicationEditDetail")
-    public ResponseEntity<ApplicationEditDetailResponseDto> getApplicationEditDetail(
-            @RequestBody ApplicationEditDetailRequestDto requestDto) throws IllegalAccessException {
-        ApplicationEditDetailResponseDto responseDto = new ApplicationEditDetailResponseDto();
-        responseDto.setEditable(true);
-        responseDto = applicationService.getApplicationEditDetail(requestDto, responseDto);
-
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(responseDto);
-    }
-
-    //처음 답변 작성하는 폼
-    @GetMapping("/{club_id}/apply")
-    public ResponseEntity<ApplicationDetailResponseDto> getApplicationDetail(
-            @RequestBody ApplicationDetailRequestDto requestDto,
-            @PathVariable("club_id") Long clubId) throws IllegalAccessException {
-        ApplicationDetailResponseDto responseDto = new ApplicationDetailResponseDto();
-        responseDto = applicationService.getApplicationDetail(requestDto, responseDto, clubId);
-        responseDto.setClubId(clubId);
-
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(responseDto);
-    }
 }

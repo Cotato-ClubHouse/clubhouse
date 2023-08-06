@@ -186,22 +186,35 @@ public class ApplicationServiceImpl implements ApplicationService {
             throw new IllegalAccessException("해당 지원서의 작성자가 아닙니다");
         }
 
-        responseDto.setFormName(form.getTitle());
-
-        List<Question> questionList = formService.findAllQuestions(form.getId());
-
-        List<QNA> qnaList = new ArrayList<>();
-        for (Question question : questionList) {
-            linkQuestionAndAnswer(application, question,qnaList);
-        }
-        responseDto.setQnaList(qnaList);
-        responseDto.setHttpStatus(HttpStatus.OK);
+        setQNALink(responseDto, application, form);
 
         return responseDto;
     }
 
+    //동아리 회장이 신청서의 세부목록을 보여준다
     @Override
-    public ApplicationDetailResponseDto getApplicationDetail(ApplicationDetailRequestDto requestDto, ApplicationDetailResponseDto responseDto, Long clubId) throws IllegalAccessException {
+    public ApplicationEditDetailResponseDto getApplicationDetail(ApplicationEditDetailRequestDto requestDto, ApplicationEditDetailResponseDto responseDto) throws IllegalAccessException {
+        /**
+         * member_id가 클럽의 회장인지 확인해야한다 TODO
+         */
+
+        Application application = findApplicationById(requestDto.getApplicationId());
+        Member member = application.getMember();
+
+        //회원 정보 작성
+        responseDto.setUserInfoForm(setUserInfoForm(member));
+        
+        //QNA 링크하기
+        setQNALink(responseDto,application,application.getForm());
+
+        responseDto.setHttpStatus(HttpStatus.OK);
+
+        return responseDto;
+
+    }
+
+    @Override
+    public ApplicationDetailResponseDto getFormQuestion(ApplicationDetailRequestDto requestDto, ApplicationDetailResponseDto responseDto, Long clubId) throws IllegalAccessException {
         //멤버가 클럽에 속해있는지 확인해야한다. TODO
 
         List<String> questionContentList = new ArrayList<>();
@@ -272,9 +285,32 @@ public class ApplicationServiceImpl implements ApplicationService {
         }
     }
 
+    private UserInfoForm setUserInfoForm(Member member) {
+        UserInfoForm userInfoForm = new UserInfoForm();
+        userInfoForm.setBirthDay(member.getAge().toString()); //나이가 생년월일로 바뀌면 바꿔야함 TODO
+        userInfoForm.setName(member.getName());
+        userInfoForm.setGender(member.getGender());
+        userInfoForm.setPhoneNum(member.getPhone());
+        userInfoForm.setUnivAndMajor(member.getUniv()+" "+ "MAJOR"); //MAJOR 추가되면 수정해야함 TODO
+
+        return userInfoForm;
+    }
+
     private Form findFormById(Long formId) {
-        Form form = formService.findById(formId)
+        return formService.findById(formId)
                 .orElseThrow(() -> new IllegalArgumentException("해당하는 form이 없습니다"));
-        return form;
+    }
+
+    private void setQNALink(ApplicationEditDetailResponseDto responseDto, Application application, Form form) {
+        responseDto.setFormName(form.getTitle());
+
+        List<Question> questionList = formService.findAllQuestions(form.getId());
+
+        List<QNA> qnaList = new ArrayList<>();
+        for (Question question : questionList) {
+            linkQuestionAndAnswer(application, question,qnaList);
+        }
+        responseDto.setQnaList(qnaList);
+        responseDto.setHttpStatus(HttpStatus.OK);
     }
 }

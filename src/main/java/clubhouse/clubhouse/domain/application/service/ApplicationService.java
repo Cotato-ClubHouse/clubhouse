@@ -15,5 +15,7 @@ public interface ApplicationService {
 
     ApplicationEditDetailResponseDto getApplicationEditDetail(ApplicationEditDetailRequestDto requestDto, ApplicationEditDetailResponseDto responseDto) throws IllegalAccessException;
 
-    ApplicationDetailResponseDto getApplicationDetail(ApplicationDetailRequestDto requestDto, ApplicationDetailResponseDto responseDto, Long clubId) throws IllegalAccessException;
+    ApplicationDetailResponseDto getFormQuestion(ApplicationDetailRequestDto requestDto, ApplicationDetailResponseDto responseDto, Long clubId) throws IllegalAccessException;
+
+    ApplicationEditDetailResponseDto getApplicationDetail(ApplicationEditDetailRequestDto requestDto, ApplicationEditDetailResponseDto responseDto) throws IllegalAccessException;
 }
