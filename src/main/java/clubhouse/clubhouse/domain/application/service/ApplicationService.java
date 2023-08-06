@@ -1,7 +1,6 @@
 package clubhouse.clubhouse.domain.application.service;
 
 import clubhouse.clubhouse.domain.application.dto.*;
-import org.springframework.http.HttpStatus;
 
 public interface ApplicationService {
     void apply(ApplyRequestDto applyRequestDto) throws IllegalAccessException;
@@ -14,5 +13,7 @@ public interface ApplicationService {
 
     MyPageResponseDto getMyPage(MyPageRequestDto requestDto);
 
-    ApplicationDetailResponseDto getApplicationDetail(ApplicationDetailRequestDto requestDto, ApplicationDetailResponseDto responseDto) throws IllegalAccessException;
+    ApplicationEditDetailResponseDto getApplicationEditDetail(ApplicationEditDetailRequestDto requestDto, ApplicationEditDetailResponseDto responseDto) throws IllegalAccessException;
+
+    ApplicationDetailResponseDto getApplicationDetail(ApplicationDetailRequestDto requestDto, ApplicationDetailResponseDto responseDto, Long clubId) throws IllegalAccessException;
 }

@@ -3,7 +3,8 @@ package clubhouse.clubhouse.domain.application.dto;
 import lombok.Data;
 
 @Data
-public class ApplicationDetailRequestDto {
-    private Long formId;
+public class ApplicationEditDetailRequestDto {
+    private Long applicationId;
+
     private String memberEmail;
 }

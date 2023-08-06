@@ -78,13 +78,28 @@ public class ApplyController {
                 .body(responseDto);
     }
 
+
     //사용자가 수정하는 지원서 세부내용
     @GetMapping("/mypage/getApplicationEditDetail")
-    public ResponseEntity<ApplicationDetailResponseDto> getApplicationDetail(
-            @RequestBody ApplicationDetailRequestDto requestDto) throws IllegalAccessException {
-        ApplicationDetailResponseDto responseDto = new ApplicationDetailResponseDto();
+    public ResponseEntity<ApplicationEditDetailResponseDto> getApplicationEditDetail(
+            @RequestBody ApplicationEditDetailRequestDto requestDto) throws IllegalAccessException {
+        ApplicationEditDetailResponseDto responseDto = new ApplicationEditDetailResponseDto();
         responseDto.setEditable(true);
-        responseDto = applicationService.getApplicationDetail(requestDto, responseDto);
+        responseDto = applicationService.getApplicationEditDetail(requestDto, responseDto);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(responseDto);
+    }
+
+    //처음 답변 작성하는 폼
+    @GetMapping("/{club_id}/apply")
+    public ResponseEntity<ApplicationDetailResponseDto> getApplicationDetail(
+            @RequestBody ApplicationDetailRequestDto requestDto,
+            @PathVariable("club_id") Long clubId) throws IllegalAccessException {
+        ApplicationDetailResponseDto responseDto = new ApplicationDetailResponseDto();
+        responseDto = applicationService.getApplicationDetail(requestDto, responseDto, clubId);
+        responseDto.setClubId(clubId);
 
         return ResponseEntity
                 .status(HttpStatus.OK)

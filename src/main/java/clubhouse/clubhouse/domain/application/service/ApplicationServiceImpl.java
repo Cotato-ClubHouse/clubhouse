@@ -122,8 +122,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         Long formId = requestDto.getForm_id();
         log.info("getApplicationList Start");
 
-        Form form = formService.findById(formId)
-                .orElseThrow(() -> new IllegalArgumentException("해당하는 form이 없습니다"));
+        Form form = findFormById(formId);
 
         List<Application> applyList = applicationRepository.findAllByForm(form); //0이상의 지원서
 
@@ -149,6 +148,8 @@ public class ApplicationServiceImpl implements ApplicationService {
 
         return responseDto;
     }
+
+
 
     //myPage 정보 가져오기
     @Override
@@ -176,7 +177,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Override
     @Transactional
-    public ApplicationDetailResponseDto getApplicationDetail(ApplicationDetailRequestDto requestDto, ApplicationDetailResponseDto responseDto) throws IllegalAccessException {
+    public ApplicationEditDetailResponseDto getApplicationEditDetail(ApplicationEditDetailRequestDto requestDto, ApplicationEditDetailResponseDto responseDto) throws IllegalAccessException {
         Application application = findApplicationById(requestDto.getApplicationId());
         Form form = application.getForm();
         Member member = findMemberByEmail(requestDto.getMemberEmail());
@@ -194,6 +195,25 @@ public class ApplicationServiceImpl implements ApplicationService {
             linkQuestionAndAnswer(application, question,qnaList);
         }
         responseDto.setQnaList(qnaList);
+        responseDto.setHttpStatus(HttpStatus.OK);
+
+        return responseDto;
+    }
+
+    @Override
+    public ApplicationDetailResponseDto getApplicationDetail(ApplicationDetailRequestDto requestDto, ApplicationDetailResponseDto responseDto, Long clubId) throws IllegalAccessException {
+        //멤버가 클럽에 속해있는지 확인해야한다. TODO
+
+        List<String> questionContentList = new ArrayList<>();
+        List<Question> questionList = formService.findAllQuestions(requestDto.getFormId());
+        responseDto.setFormName(findFormById(requestDto.getFormId()).getTitle());
+
+        for (Question q : questionList) {
+            questionContentList.add(q.getContents());
+        }
+        responseDto.setQeustionList(questionContentList);
+        responseDto.setHttpStatus(HttpStatus.OK);
+
 
         return responseDto;
     }
@@ -250,5 +270,11 @@ public class ApplicationServiceImpl implements ApplicationService {
         if (form.getFormStatus()== FormStatus.CLOSING) {
             throw new IllegalAccessException("종료됐습니다");
         }
+    }
+
+    private Form findFormById(Long formId) {
+        Form form = formService.findById(formId)
+                .orElseThrow(() -> new IllegalArgumentException("해당하는 form이 없습니다"));
+        return form;
     }
 }
