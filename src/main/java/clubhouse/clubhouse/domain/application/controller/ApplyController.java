@@ -21,7 +21,6 @@ public class ApplyController {
             @PathVariable("club_id") Long clubId) throws IllegalAccessException {
         ApplicationDetailResponseDto responseDto = new ApplicationDetailResponseDto();
         responseDto = applicationService.getFormQuestion(requestDto, responseDto, clubId);
-        responseDto.setClubId(clubId);
 
         return ResponseEntity
                 .status(HttpStatus.OK)

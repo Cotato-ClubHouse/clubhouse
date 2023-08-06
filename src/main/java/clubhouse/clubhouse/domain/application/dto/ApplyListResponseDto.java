@@ -11,5 +11,5 @@ public class ApplyListResponseDto {
     String formName;
 
     HttpStatus httpStatus;
-    List<ApplyListResponseForm> application_list;
+    List<ApplyListResponseForm> applicationList;
 }

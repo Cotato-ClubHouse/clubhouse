@@ -11,5 +11,5 @@ public class ApplicationDetailResponseDto {
     private String formName;
     private List<String> qeustionList;
 
-    private Long clubId;
+    private Long formId;
 }

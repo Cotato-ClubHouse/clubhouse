@@ -38,7 +38,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     @Transactional
     public void apply(ApplyRequestDto applyRequestDto) throws IllegalAccessException {
-        Long formId = applyRequestDto.getForm_id();
+        Long formId = applyRequestDto.getFormId();
         List<Question> questions = formService.findAllQuestions(formId); //여기서 순서 맞춰줘야함
         List<String> answers = applyRequestDto.getAnswers();
         
@@ -48,7 +48,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
         checkFormStatusClose(form);
 
-        Member member = findMemberById(applyRequestDto.getMember_id());
+        Member member = findMemberByEmail(applyRequestDto.getMemberEmail());
 
         //이미 지원한 신청서가 있을 때는 에러
         Optional<Application> findAlreadyExistMember = applicationRepository.findByMemberAndForm(member, form);
@@ -81,7 +81,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         checkFormStatusClose(application.getForm());
 
         //멤버 찾기
-        Member member = findMemberById(applyRequestDto.getMember_id());
+        Member member = findMemberByEmail(applyRequestDto.getMemberEmail());
 
         //member 같은지 확인
         if (application.getMember() != member) {
@@ -100,11 +100,12 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Transactional
     public void changeIsPass(ApplyChangeIsPassRequestDto requestDto,Long clubId,Long applicationId) {
         /**
-         * member_id가 클럽의 회장인지 확인해야한다 TODO
+         * memberEmail이 클럽의 회장인지 확인해야한다 TODO
          */
+        Member member = findMemberByEmail(requestDto.getMemberEmail()); //회장 member
 
         Application application = findApplicationById(applicationId);
-        boolean isPass = Boolean.parseBoolean(requestDto.getIs_pass());
+        boolean isPass = Boolean.parseBoolean(requestDto.getIsPass());
         Application changedApplication = application.changeIsPass(isPass);
 
         /**
@@ -119,7 +120,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     @Transactional
     public ApplyListResponseDto getApplicationList(ApplyListRequestDto requestDto) throws IllegalAccessException {
-        Long formId = requestDto.getForm_id();
+        Long formId = requestDto.getFormId();
         log.info("getApplicationList Start");
 
         Form form = findFormById(formId);
@@ -143,7 +144,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
         }
         responseDto.setFormName(form.getTitle());
-        responseDto.setApplication_list(responseFormList);
+        responseDto.setApplicationList(responseFormList);
         log.info("GET ApplyList Complete");
 
         return responseDto;
@@ -213,6 +214,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     }
 
+    //질문 리스트 출력
     @Override
     public ApplicationDetailResponseDto getFormQuestion(ApplicationDetailRequestDto requestDto, ApplicationDetailResponseDto responseDto, Long clubId) throws IllegalAccessException {
         //멤버가 클럽에 속해있는지 확인해야한다. TODO
@@ -225,6 +227,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             questionContentList.add(q.getContents());
         }
         responseDto.setQeustionList(questionContentList);
+        responseDto.setFormId(requestDto.getFormId());
         responseDto.setHttpStatus(HttpStatus.OK);
 
 

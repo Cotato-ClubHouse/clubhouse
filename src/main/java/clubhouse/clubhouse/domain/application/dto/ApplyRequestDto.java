@@ -6,7 +6,7 @@ import java.util.List;
 
 @Data
 public class ApplyRequestDto {
-    private Long member_id;
-    private Long form_id;
+    private String memberEmail;
+    private Long formId;
     private List<String> answers;
 }

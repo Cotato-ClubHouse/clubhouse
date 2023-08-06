@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public class ApplyListRequestDto {
-    private Long member_id;
-    private Long form_id;
+    private String memberEmail;
+    private Long formId;
 }

@@ -6,6 +6,6 @@ import java.util.List;
 
 @Data
 public class ApplyChangeIsPassRequestDto {
-    private Long member_id;
-    private String is_pass;
+    private String memberEmail;
+    private String isPass;
 }
