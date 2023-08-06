@@ -19,9 +19,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-	@Value("${jwt.secretKey}")
-	private String secretkey;
-
 	private final JwtUtil jwtUtil;
 
 	@Bean
@@ -43,7 +40,7 @@ public class SecurityConfig {
 			.sessionManagement()
 			.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 			.and()
-			.addFilterBefore(new JwtFilter(secretkey, jwtUtil), UsernamePasswordAuthenticationFilter.class);
+			.addFilterBefore(new JwtFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
 		return httpSecurity.getOrBuild();
 	}

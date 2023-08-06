@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
 
+import java.time.LocalDate;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,6 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
@@ -21,6 +24,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import clubhouse.clubhouse.domain.member.entity.Gender;
 import clubhouse.clubhouse.domain.member.entity.Member;
 import clubhouse.clubhouse.domain.member.entity.MemberJoinRequest;
 import clubhouse.clubhouse.domain.member.entity.MemberLoginRequest;
@@ -28,6 +32,7 @@ import clubhouse.clubhouse.domain.member.repository.MemberRepository;
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@ActiveProfiles("test")
 class MemberControllerTest {
 
 	@Autowired
@@ -54,10 +59,16 @@ class MemberControllerTest {
 		String email = "dohyung@clubhouse.com";
 		String password = "1q2w3e4r";
 
+		Member member = Member.builder()
+			.email(email)
+			.password(password)
+			.build();
+
+
 		mockMvc.perform(MockMvcRequestBuilders.post("/v1/users/join")
 				.with(csrf())
 				.contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(new MemberJoinRequest(email, password))))
+				.content(objectMapper.writeValueAsString(member)))
 			.andExpect(MockMvcResultMatchers.status().isOk())
 			.andDo(MockMvcResultHandlers.print());
 	}
@@ -75,10 +86,20 @@ class MemberControllerTest {
 
 		memberRepository.save(member1);
 
+		MemberJoinRequest memberJoinRequest = MemberJoinRequest.builder()
+			.email(email)
+			.password(password)
+			.birthDate(LocalDate.parse("2000-01-01"))
+			.gender(Gender.valueOf("MALE"))
+			.name("김도형")
+			.phone("01012345678")
+			.univ("숭실대학교")
+			.build();
+
 		mockMvc.perform(MockMvcRequestBuilders.post("/v1/users/join")
 				.with(csrf())
 				.contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(new MemberJoinRequest(email, password)))
+				.content(objectMapper.writeValueAsString(memberJoinRequest))
 			)
 			.andExpect(MockMvcResultMatchers.status().isConflict())
 			.andDo(MockMvcResultHandlers.print());
@@ -115,10 +136,20 @@ class MemberControllerTest {
 		String email = "dohyung@clubhouse.com";
 		String password = encoder.encode("1q2w3e4r");
 
+		MemberJoinRequest memberJoinRequest = MemberJoinRequest.builder()
+			.email(email)
+			.password(password)
+			.birthDate(LocalDate.parse("2000-01-01"))
+			.gender(Gender.valueOf("MALE"))
+			.name("김도형")
+			.phone("01012345678")
+			.univ("숭실대학교")
+			.build();
+
 		mockMvc.perform(MockMvcRequestBuilders.post("/v1/users/login")
 				.with(csrf())
 				.contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(new MemberJoinRequest(email, password))))
+				.content(objectMapper.writeValueAsString(memberJoinRequest)))
 			.andExpect(MockMvcResultMatchers.status().isNotFound())
 			.andDo(MockMvcResultHandlers.print());
 	}

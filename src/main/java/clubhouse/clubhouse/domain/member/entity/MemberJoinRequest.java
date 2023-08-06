@@ -1,5 +1,7 @@
 package clubhouse.clubhouse.domain.member.entity;
 
+import java.time.LocalDate;
+
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Getter;
@@ -24,21 +26,25 @@ public class MemberJoinRequest {
 	@NotBlank(message = "대학교를 입력해주세요")
 	private String univ;
 
-	@NotBlank(message = "나이를 입력해주세요")
-	private Long age;
+	@NotBlank(message = "학과를 입력해주세요")
+	private String major;
+
+	@NotBlank(message = "생년월일을 입력해주세요")
+	private LocalDate birthDate;
 
 	@NotBlank(message = "성별 선택해주세요")
 	private Gender gender;
 
 	@Builder
-	public MemberJoinRequest(String name, String email, String password, String phone, String univ, Long age,
-		Gender gender) {
+	public MemberJoinRequest(String name, String email, String password, String phone, String univ, String major,
+		LocalDate birthDate, Gender gender) {
 		this.name = name;
 		this.email = email;
 		this.password = password;
 		this.phone = phone;
 		this.univ = univ;
-		this.age = age;
+		this.major = major;
+		this.birthDate = birthDate;
 		this.gender = gender;
 	}
 }

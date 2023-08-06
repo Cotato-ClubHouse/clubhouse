@@ -23,8 +23,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class JwtFilter extends OncePerRequestFilter {
 
-	private final String secretKey;
-
 	private final JwtUtil jwtUtil;
 
 	@Override

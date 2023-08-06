@@ -3,6 +3,7 @@ package clubhouse.clubhouse.utils;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.Claims;
@@ -49,7 +50,7 @@ public class JwtUtil {
 		return Jwts.builder()
 			.setClaims(claims)
 			.setIssuedAt(new Date(System.currentTimeMillis()))
-			.setExpiration(new Date(System.currentTimeMillis() + 3600000))
+			.setExpiration(new Date(System.currentTimeMillis() + accessTokenExpiration))
 			.signWith(SignatureAlgorithm.HS256, secretKey)
 			.compact();
 	}

@@ -1,5 +1,7 @@
 package clubhouse.clubhouse.domain.member.entity;
 
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,8 +36,11 @@ public class Member {
 	@Column(name = "member_univ")
 	private String univ;
 
-	@Column(name = "member_age")
-	private Long age;
+	@Column(name = "member_major")
+	private String major;
+
+	@Column(name = "member_birthDate")
+	private LocalDate birthDate;
 
 	@Column(name = "member_gender")
 	@Enumerated(EnumType.STRING)
@@ -48,13 +53,16 @@ public class Member {
 	private String refreshToken;
 
 	@Builder
-	public Member(String name, String email, String password, String phone, String univ, Long age, Gender gender) {
+	public Member(String name, String email, String password, String phone, String univ, String major,
+		LocalDate birthDate,
+		Gender gender) {
 		this.name = name;
 		this.email = email;
 		this.password = password;
 		this.phone = phone;
 		this.univ = univ;
-		this.age = age;
+		this.major = major;
+		this.birthDate = birthDate;
 		this.gender = gender;
 	}
 	public void updateRefreshToken(String refreshToken){
@@ -63,5 +71,11 @@ public class Member {
 
 	public void invaildRefreshToken() {
 		this.refreshToken = null;
+	}
+	// 나이 계산
+	public int getAge(LocalDate birthDate){
+		LocalDate today = LocalDate.now();
+		Period period = Period.between(today, birthDate);
+		return period.getYears();
 	}
 }

@@ -39,7 +39,8 @@ public class MemberService {
 			.password(encoder.encode(memberJoinRequest.getPassword()))
 			.phone(memberJoinRequest.getPhone())
 			.univ(memberJoinRequest.getUniv())
-			.age(memberJoinRequest.getAge())
+			.major(memberJoinRequest.getMajor())
+			.birthDate(memberJoinRequest.getBirthDate())
 			.gender(memberJoinRequest.getGender())
 			.build();
 
