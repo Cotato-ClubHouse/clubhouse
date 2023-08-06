@@ -70,7 +70,7 @@ public class ApplyController {
 
     @GetMapping("/mypage")
     public ResponseEntity<MyPageResponseDto> getUserApplyList(
-            @RequestBody MyPageRequestDto requestDto){
+            @RequestBody MyPageRequestDto requestDto) {
         MyPageResponseDto responseDto = applicationService.getMyPage(requestDto);
 
         return ResponseEntity
@@ -78,4 +78,16 @@ public class ApplyController {
                 .body(responseDto);
     }
 
+    //사용자가 수정하는 지원서 세부내용
+    @GetMapping("/mypage/getApplicationDetail")
+    public ResponseEntity<ApplicationDetailResponseDto> getApplicationDetail(
+            @RequestBody ApplicationDetailRequestDto requestDto) throws IllegalAccessException {
+        ApplicationDetailResponseDto responseDto = new ApplicationDetailResponseDto();
+        responseDto.setEditable(true);
+        responseDto = applicationService.getApplicationDetail(requestDto, responseDto);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(responseDto);
+    }
 }

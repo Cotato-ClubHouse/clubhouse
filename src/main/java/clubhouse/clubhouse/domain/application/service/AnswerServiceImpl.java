@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -31,5 +32,10 @@ public class AnswerServiceImpl implements AnswerService{
         }
 
         return answerList;
+    }
+
+    @Override
+    public Optional<Answer> findAnswerWithQuestion(Application application, Question question) {
+        return answerRepository.findByApplicationAndQuestion(application, question);
     }
 }

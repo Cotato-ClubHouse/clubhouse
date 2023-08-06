@@ -57,7 +57,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         }
 
         //값이 없는 답변이 있으면 예외 처리
-        checkAllAnswerInput(answers);
+        checkAllAnswerInput(answers); //모든 질문에 대한 답이 필수인지에 대해 결정나면 바꿔야 할수도 있음 TODO(현재는 모든 값 필수)
 
         //답변이 다 있으면 지원서 만들기
         Application newApplication = applicationRepository.save(Application.createApplication(LocalDateTime.now(), member, form, false));
@@ -172,6 +172,42 @@ public class ApplicationServiceImpl implements ApplicationService {
         responseDto.setApplicationList(applyListFormList);
 
         return responseDto;
+    }
+
+    @Override
+    @Transactional
+    public ApplicationDetailResponseDto getApplicationDetail(ApplicationDetailRequestDto requestDto, ApplicationDetailResponseDto responseDto) throws IllegalAccessException {
+        Application application = findApplicationById(requestDto.getApplicationId());
+        Form form = application.getForm();
+        Member member = findMemberByEmail(requestDto.getMemberEmail());
+
+        if (application.getMember() != member) {
+            throw new IllegalAccessException("해당 지원서의 작성자가 아닙니다");
+        }
+
+        responseDto.setFormName(form.getTitle());
+
+        List<Question> questionList = formService.findAllQuestions(form.getId());
+
+        List<QNA> qnaList = new ArrayList<>();
+        for (Question question : questionList) {
+            linkQuestionAndAnswer(application, question,qnaList);
+        }
+        responseDto.setQnaList(qnaList);
+
+        return responseDto;
+    }
+
+    private void linkQuestionAndAnswer(Application application, Question question, List<QNA> qnaList) {
+        QNA qna = new QNA();
+        qna.setQuestion(question.getContents());
+        Optional<Answer> answerOptional = answerService.findAnswerWithQuestion(application, question);
+        if (answerOptional.isEmpty()) {
+            qna.setAnswer("");
+        } else {
+            qna.setAnswer(answerOptional.get().getContents());
+        }
+        qnaList.add(qna);
     }
 
     private Member findMemberById(Long memberId) {

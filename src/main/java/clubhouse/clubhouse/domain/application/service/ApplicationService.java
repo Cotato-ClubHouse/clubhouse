@@ -13,4 +13,6 @@ public interface ApplicationService {
     void changeIsPass(ApplyChangeIsPassRequestDto requestDto,Long clubId ,Long applicationId);
 
     MyPageResponseDto getMyPage(MyPageRequestDto requestDto);
+
+    ApplicationDetailResponseDto getApplicationDetail(ApplicationDetailRequestDto requestDto, ApplicationDetailResponseDto responseDto) throws IllegalAccessException;
 }
