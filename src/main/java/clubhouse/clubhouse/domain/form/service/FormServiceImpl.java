@@ -4,6 +4,7 @@ import clubhouse.clubhouse.domain.club.entity.Club;
 import clubhouse.clubhouse.domain.club.repository.ClubRepository;
 import clubhouse.clubhouse.domain.form.dto.*;
 import clubhouse.clubhouse.domain.form.entity.Form;
+import clubhouse.clubhouse.domain.form.entity.Question;
 import clubhouse.clubhouse.domain.form.repository.FormRepository;
 import clubhouse.clubhouse.global.S3.S3Uploader;
 import lombok.RequiredArgsConstructor;
@@ -159,6 +160,12 @@ public class FormServiceImpl implements FormService {
                 .formStatus(form.get().getFormStatus())
                 .build();
 
+        return returnValue;
+    }
+
+    @Override
+    public List<Question> findAllQuestions(Long formId) {
+        List<Question> returnValue = questionService.findAllQuesByFormId(formId);
         return returnValue;
     }
 }
