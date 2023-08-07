@@ -284,6 +284,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     private UserInfoForm setUserInfoForm(Member member) {
         UserInfoForm userInfoForm = new UserInfoForm();
         userInfoForm.setBirthDay(member.getAge().toString()); //나이가 생년월일로 바뀌면 바꿔야함 TODO
+        //userInfoForm.setBirthDay(member.getAge());
         userInfoForm.setName(member.getName());
         userInfoForm.setGender(member.getGender());
         userInfoForm.setPhoneNum(member.getPhone());
