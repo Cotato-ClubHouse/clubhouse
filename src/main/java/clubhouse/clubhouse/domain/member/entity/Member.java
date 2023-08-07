@@ -1,10 +1,13 @@
 package clubhouse.clubhouse.domain.member.entity;
 
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -33,14 +36,46 @@ public class Member {
 	@Column(name = "member_univ")
 	private String univ;
 
-	@Column(name = "member_age")
-	private Long age;
+	@Column(name = "member_major")
+	private String major;
 
-	@OneToMany(mappedBy = "member")
-	private List<MemberClub> memberClubs = new ArrayList<>();
+	@Column(name = "member_birthDate")
+	private LocalDate birthDate;
 
 	@Column(name = "member_gender")
 	@Enumerated(EnumType.STRING)
 	private Gender gender;
 
+	@OneToMany(mappedBy = "member")
+	private List<MemberClub> memberClubs = new ArrayList<>();
+
+	@Column(name = "refreshToken")
+	private String refreshToken;
+
+	@Builder
+	public Member(String name, String email, String password, String phone, String univ, String major,
+		LocalDate birthDate,
+		Gender gender) {
+		this.name = name;
+		this.email = email;
+		this.password = password;
+		this.phone = phone;
+		this.univ = univ;
+		this.major = major;
+		this.birthDate = birthDate;
+		this.gender = gender;
+	}
+	public void updateRefreshToken(String refreshToken){
+		this.refreshToken = refreshToken;
+	}
+
+	public void invaildRefreshToken() {
+		this.refreshToken = null;
+	}
+	// 나이 계산
+	public int getAge(LocalDate birthDate){
+		LocalDate today = LocalDate.now();
+		Period period = Period.between(today, birthDate);
+		return period.getYears();
+	}
 }
