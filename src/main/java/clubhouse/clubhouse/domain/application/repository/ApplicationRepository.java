@@ -11,7 +11,7 @@ import java.util.Optional;
 
 @Repository
 public interface ApplicationRepository extends JpaRepository<Application, Long> {
-    List<Application> findAllByForm(Form formId);
+    List<Application> findAllByForm(Form form);
 
     List<Application> findAllByMember(Member member);
 
