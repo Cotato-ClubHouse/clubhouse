@@ -12,6 +12,7 @@ import clubhouse.clubhouse.domain.application.dto.response.MyPageResponseDto;
 import clubhouse.clubhouse.domain.application.entity.Answer;
 import clubhouse.clubhouse.domain.application.entity.Application;
 import clubhouse.clubhouse.domain.application.repository.ApplicationRepository;
+import clubhouse.clubhouse.domain.club.service.MypageService;
 import clubhouse.clubhouse.domain.form.entity.Form;
 import clubhouse.clubhouse.domain.form.entity.FormStatus;
 import clubhouse.clubhouse.domain.form.entity.Question;
@@ -142,7 +143,8 @@ public class ApplicationServiceImpl implements ApplicationService {
         for (Application apply : applyList){
             Member member = apply.getMember();
             String name = member.getName();
-            Long age = member.getAge();
+            //Long age = member.getAge(); //TODO
+            Long age = 1L; //임시
             String univ = member.getUniv();
 
             ApplyListResponseForm applyForm = new ApplyListResponseForm(name,age,univ,false, apply.getId());
@@ -291,7 +293,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     private UserInfoForm setUserInfoForm(Member member) {
         UserInfoForm userInfoForm = new UserInfoForm();
-        userInfoForm.setBirthDay(member.getAge().toString()); //나이가 생년월일로 바뀌면 바꿔야함 TODO
+        //userInfoForm.setBirthDay(member.getAge().toString()); //나이가 생년월일로 바뀌면 바꿔야함
         //userInfoForm.setBirthDay(member.getAge());
         userInfoForm.setName(member.getName());
         userInfoForm.setGender(member.getGender());

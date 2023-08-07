@@ -16,7 +16,7 @@ public class ClubAdminController {
 
     @GetMapping("/{clubId}")
     public ResponseEntity<String> getClubInfo(@PathVariable long clubId){
-        mypageService.getClubMembers(clubId);
+        mypageService.getClubInfo(clubId);
         return ResponseEntity.ok("Club Members loaded");
     }
 
