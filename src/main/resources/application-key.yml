@@ -1,0 +1,20 @@
+cloud:
+  aws:
+    credentials:
+      accessKey: AKIASW4PN5RZS5TCC2BY
+      secretKey: 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
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false
+    s3:
+      bucket: cotato-clubhouse1
+#application:
+#  bucket:
+#    name: cotato-clubhouse
+
+spring:
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
