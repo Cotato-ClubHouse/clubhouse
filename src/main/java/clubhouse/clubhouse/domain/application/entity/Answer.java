@@ -1,14 +1,10 @@
 package clubhouse.clubhouse.domain.application.entity;
 
-import clubhouse.clubhouse.domain.form.entity.Form;
 import clubhouse.clubhouse.domain.form.entity.Question;
-import clubhouse.clubhouse.domain.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -40,4 +36,10 @@ public class Answer {
     public static Answer createAnswer(String contents, Application application, Question question) {
         return new Answer(contents, application, question);
     }
+
+    public Answer changeAnswer(String content) {
+        contents = content;
+        return this;
+    }
+
 }
