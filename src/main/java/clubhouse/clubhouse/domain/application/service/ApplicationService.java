@@ -1,6 +1,10 @@
 package clubhouse.clubhouse.domain.application.service;
 
-import clubhouse.clubhouse.domain.application.dto.*;
+import clubhouse.clubhouse.domain.application.dto.request.*;
+import clubhouse.clubhouse.domain.application.dto.response.ApplicationDetailResponseDto;
+import clubhouse.clubhouse.domain.application.dto.response.ApplicationEditDetailResponseDto;
+import clubhouse.clubhouse.domain.application.dto.response.ApplyListResponseDto;
+import clubhouse.clubhouse.domain.application.dto.response.MyPageResponseDto;
 
 public interface ApplicationService {
     void apply(ApplyRequestDto applyRequestDto) throws IllegalAccessException;
@@ -9,7 +13,7 @@ public interface ApplicationService {
 
     ApplyListResponseDto getApplicationList(ApplyListRequestDto requestDto) throws IllegalAccessException;
 
-    void changeIsPass(ApplyChangeIsPassRequestDto requestDto,Long clubId ,Long applicationId);
+    void changeIsPass(ApplyChangeIsPassRequestDto requestDto, Long clubId , Long applicationId);
 
     MyPageResponseDto getMyPage(MyPageRequestDto requestDto);
 

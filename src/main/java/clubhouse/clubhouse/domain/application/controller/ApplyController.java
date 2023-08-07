@@ -1,6 +1,7 @@
 package clubhouse.clubhouse.domain.application.controller;
 
-import clubhouse.clubhouse.domain.application.dto.*;
+import clubhouse.clubhouse.domain.application.dto.request.*;
+import clubhouse.clubhouse.domain.application.dto.response.*;
 import clubhouse.clubhouse.domain.application.service.ApplicationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

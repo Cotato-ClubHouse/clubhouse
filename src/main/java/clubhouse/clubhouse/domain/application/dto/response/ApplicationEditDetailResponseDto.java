@@ -1,5 +1,7 @@
-package clubhouse.clubhouse.domain.application.dto;
+package clubhouse.clubhouse.domain.application.dto.response;
 
+import clubhouse.clubhouse.domain.application.dto.form.QNA;
+import clubhouse.clubhouse.domain.application.dto.form.UserInfoForm;
 import lombok.Data;
 import org.springframework.http.HttpStatus;
 

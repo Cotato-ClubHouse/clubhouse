@@ -1,6 +1,14 @@
 package clubhouse.clubhouse.domain.application.service;
 
-import clubhouse.clubhouse.domain.application.dto.*;
+import clubhouse.clubhouse.domain.application.dto.form.ApplyListResponseForm;
+import clubhouse.clubhouse.domain.application.dto.form.QNA;
+import clubhouse.clubhouse.domain.application.dto.form.UserApplyListForm;
+import clubhouse.clubhouse.domain.application.dto.form.UserInfoForm;
+import clubhouse.clubhouse.domain.application.dto.request.*;
+import clubhouse.clubhouse.domain.application.dto.response.ApplicationDetailResponseDto;
+import clubhouse.clubhouse.domain.application.dto.response.ApplicationEditDetailResponseDto;
+import clubhouse.clubhouse.domain.application.dto.response.ApplyListResponseDto;
+import clubhouse.clubhouse.domain.application.dto.response.MyPageResponseDto;
 import clubhouse.clubhouse.domain.application.entity.Answer;
 import clubhouse.clubhouse.domain.application.entity.Application;
 import clubhouse.clubhouse.domain.application.repository.ApplicationRepository;
@@ -97,7 +105,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     //IsPass 바꾸기
     @Override
     @Transactional
-    public void changeIsPass(ApplyChangeIsPassRequestDto requestDto,Long clubId,Long applicationId) {
+    public void changeIsPass(ApplyChangeIsPassRequestDto requestDto, Long clubId, Long applicationId) {
         /**
          * memberEmail이 클럽의 회장인지 확인해야한다 TODO
          */

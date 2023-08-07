@@ -1,4 +1,4 @@
-package clubhouse.clubhouse.domain.application.dto;
+package clubhouse.clubhouse.domain.application.dto.request;
 
 import lombok.Data;
 
