@@ -1,9 +1,15 @@
 package clubhouse.clubhouse.domain.club.service;
 
+import clubhouse.clubhouse.domain.club.dto.ClubRequestDto;
 import clubhouse.clubhouse.domain.club.entity.Club;
+import clubhouse.clubhouse.domain.member.entity.Member;
 
 public interface ClubService {
-    /**
-     * 동아리 이름이랑 카테고리
-     */
+    Club saveClub(ClubRequestDto requestDto);
+
+    void deleteClub(long clubId);
+
+    void changeMemberStatus(Member member, Long clubId, boolean memberStatus);
+
+    boolean isAdmin(Long clubId, String memberEmail);
 }
