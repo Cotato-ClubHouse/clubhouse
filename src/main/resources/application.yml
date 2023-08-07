@@ -1,4 +1,10 @@
 spring:
+  profiles:
+    group:
+      local:
+        - jwt
+    active: local
+
   datasource:
     driver-class-name: org.h2.Driver
     url: jdbc:h2:tcp://localhost/~/clubhouse
@@ -16,4 +22,16 @@ spring:
       hibernate:
         format_sql: true
     show-sql: true
+#    generate-ddl: true
     defer-datasource-initialization: true
+  sql:
+    init:
+      mode: always
+  config:
+    import: application-key.yml
+#
+#logging:
+#  level:
+#    org:
+#      springframework: DEBUG
+
