@@ -3,6 +3,8 @@ package clubhouse.clubhouse.domain.application.controller;
 import clubhouse.clubhouse.domain.application.dto.request.*;
 import clubhouse.clubhouse.domain.application.dto.response.*;
 import clubhouse.clubhouse.domain.application.service.ApplicationService;
+import clubhouse.clubhouse.domain.club.dto.ClubListDto;
+import clubhouse.clubhouse.domain.club.service.MypageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +16,8 @@ import org.springframework.web.bind.annotation.*;
 public class ApplyController {
 
     private final ApplicationService applicationService;
+
+    private final MypageService mypageService;
 
     //처음 답변 작성하는 폼
     @GetMapping("/{club_id}/apply")
@@ -111,12 +115,13 @@ public class ApplyController {
                 .body(responseDto);
     }
 
-
     //My Page
     @GetMapping("/mypage")
     public ResponseEntity<MyPageResponseDto> getUserApplyList(
-            @RequestBody MyPageRequestDto requestDto) {
+            @RequestBody MyPageRequestDto requestDto){
         MyPageResponseDto responseDto = applicationService.getMyPage(requestDto);
+        ClubListDto clubList = mypageService.getClubList();
+        responseDto.setClubListDto(clubList);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
