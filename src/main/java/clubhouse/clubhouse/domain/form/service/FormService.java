@@ -3,6 +3,7 @@ package clubhouse.clubhouse.domain.form.service;
 
 import clubhouse.clubhouse.domain.form.dto.*;
 import clubhouse.clubhouse.domain.form.entity.Form;
+import clubhouse.clubhouse.domain.form.entity.Question;
 
 
 import java.io.IOException;
@@ -25,7 +26,7 @@ public interface FormService {
      * @param formId
      * @return
      */
-//    List<Question> findAllQuestions(Long formId);
+    List<Question> findAllQuestions(Long formId);
 
     /**
      * 메인 페이지
