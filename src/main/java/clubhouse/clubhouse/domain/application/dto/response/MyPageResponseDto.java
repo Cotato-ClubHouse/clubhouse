@@ -20,6 +20,6 @@ public class MyPageResponseDto {
     List<UserApplyListForm> applicationList;
 
     //가입 클럽 정보
-    ClubListDto clubListDto;
+    ClubListDto clubList;
 
 }

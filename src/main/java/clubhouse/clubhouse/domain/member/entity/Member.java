@@ -73,9 +73,9 @@ public class Member {
 		this.refreshToken = null;
 	}
 	// 나이 계산
-	public int getAge(LocalDate birthDate){
+	public int getAge(){
 		LocalDate today = LocalDate.now();
-		Period period = Period.between(today, birthDate);
+		Period period = Period.between(today, this.birthDate);
 		return period.getYears();
 	}
 }

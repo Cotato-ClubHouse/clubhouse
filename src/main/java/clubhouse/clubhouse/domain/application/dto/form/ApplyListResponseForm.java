@@ -7,12 +7,12 @@ import lombok.Data;
 public class ApplyListResponseForm {
 
     private String name;
-    private Long age;
+    private int age;
     private String school;
     private boolean isPass;
     private Long applicationId;
 
-    public ApplyListResponseForm(String name, Long age, String school, boolean is_pass, Long application_id) {
+    public ApplyListResponseForm(String name, int age, String school, boolean is_pass, Long application_id) {
         this.name = name;
         this.age = age;
         this.school = school;

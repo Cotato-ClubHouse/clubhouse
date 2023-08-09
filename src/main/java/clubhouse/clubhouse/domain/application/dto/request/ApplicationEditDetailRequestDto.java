@@ -6,5 +6,4 @@ import lombok.Data;
 public class ApplicationEditDetailRequestDto {
     private Long applicationId;
 
-    private String memberEmail;
 }
