@@ -14,6 +14,7 @@ public enum ErrorCode {
 	FORM_CLOSED(HttpStatus.CONFLICT, ""),
 	NOT_OWNER(HttpStatus.UNAUTHORIZED, ""),
 	BLANK_EXIST(HttpStatus.CONFLICT, ""),
+	DATA_ERROR(HttpStatus.CONFLICT, ""),
 
 
 	

@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 
 @RestControllerAdvice
-public class ExceptionManager {
+public class ApplicationExceptionManager {
 	@ExceptionHandler(ApplicationAppException.class)
 	public ResponseEntity<?> illegalArgumentExceptionHandler(ApplicationAppException e){
 		return ResponseEntity.status(e.getErrorCode().getHttpStatus())

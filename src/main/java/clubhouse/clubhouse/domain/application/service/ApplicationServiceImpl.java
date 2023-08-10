@@ -66,11 +66,16 @@ public class ApplicationServiceImpl implements ApplicationService {
         //이미 지원한 신청서가 있을 때는 에러
         Optional<Application> findAlreadyExistMember = applicationRepository.findByMemberAndForm(member, form);
         if (findAlreadyExistMember.isPresent()) {
-            throw new ApplicationAppException(ErrorCode.APPLICATION_EXIST, "이미 신청서가 존재합니다");
+            throw new ApplicationAppException(ErrorCode.APPLICATION_EXIST, "이미 작성한 신청서가 존재합니다");
+        }
+         
+        //Front에서 값이 없어도 ""로 넘기기는 해야한다
+        if (questions.size() != answers.size()) {
+            throw new ApplicationAppException(ErrorCode.DATA_ERROR, "모든 데이터가 넘어오지 않았습니다");
         }
 
         //값이 없는 답변이 있으면 예외 처리
-        checkAllAnswerInput(answers); //모든 질문에 대한 답이 필수인지에 대해 결정나면 바꿔야 할수도 있음 TODO(현재는 모든 값 필수)
+        checkAllAnswerInput(answers); //모든 질문에 대한 답이 필수가 아니면 지우면 됨 TODO(현재는 모든 값 필수)
 
         //답변이 다 있으면 지원서 만들기
         Application newApplication = applicationRepository.save(Application.createApplication(LocalDateTime.now(), member, form, false));
@@ -326,9 +331,9 @@ public class ApplicationServiceImpl implements ApplicationService {
     //ToDO 수정해야함
     private void isAdmin(Long clubId, Authentication authentication) {
         //boolean isAdmin = clubService.isAdmin(clubId, authentication.getName());
-        boolean isAdmin=false; //바꿔야함
+        boolean isAdmin=true; //바꿔야함
         if(!isAdmin) {
-            //throw new exception 
+            throw new ApplicationAppException(ErrorCode.NOT_OWNER, "해당 클럽의 클럽장만 진행할 수 있습니다");
         }
     }
 }
