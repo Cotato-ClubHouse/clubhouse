@@ -25,7 +25,7 @@ public class ApplyController {
     public ResponseEntity<ApplicationDetailResponseDto> getApplicationDetail(
             @RequestBody ApplicationDetailRequestDto requestDto,
             @PathVariable("club_id") Long clubId,
-            Authentication authentication) throws IllegalAccessException {
+            Authentication authentication){
         ApplicationDetailResponseDto responseDto = new ApplicationDetailResponseDto();
         responseDto = applicationService.getFormQuestion(requestDto, responseDto, clubId, authentication);
 
@@ -39,7 +39,7 @@ public class ApplyController {
     public ResponseEntity<ApplyResponseDto> saveAnswer(
             @PathVariable("club_id") Long clubId,
             @RequestBody ApplyRequestDto requestDto,
-            Authentication authentication) throws IllegalAccessException {
+            Authentication authentication){
 
         applicationService.apply(requestDto, authentication);
 
@@ -52,7 +52,7 @@ public class ApplyController {
     @GetMapping("/mypage/getApplicationEditDetail")
     public ResponseEntity<ApplicationEditDetailResponseDto> getApplicationEditDetail(
             @RequestBody ApplicationEditDetailRequestDto requestDto,
-            Authentication authentication) throws IllegalAccessException {
+            Authentication authentication){
         ApplicationEditDetailResponseDto responseDto = new ApplicationEditDetailResponseDto();
         responseDto.setEditable(true);
         responseDto = applicationService.getApplicationEditDetail(requestDto, responseDto, authentication);
@@ -68,7 +68,7 @@ public class ApplyController {
             @PathVariable("club_id") Long clubId,
             @RequestBody ApplyRequestDto requestDto,
             @PathVariable("application_id") Long applicationId,
-            Authentication authentication) throws IllegalAccessException {
+            Authentication authentication){
         applicationService.patchApply(requestDto, applicationId,authentication);
 
         return ResponseEntity
@@ -99,7 +99,7 @@ public class ApplyController {
     public ResponseEntity<ApplyListResponseDto> getApplyList(
             Authentication authentication,
             @PathVariable("club_id") Long clubId,
-            @RequestBody ApplyListRequestDto requestDto) throws IllegalAccessException {
+            @RequestBody ApplyListRequestDto requestDto){
 
         ApplyListResponseDto responseDto = applicationService.getApplicationList(requestDto,clubId ,authentication);
 
@@ -113,7 +113,7 @@ public class ApplyController {
     public ResponseEntity<ApplicationEditDetailResponseDto> getApplyList(
             @PathVariable("club_id") Long clubId,
             @RequestBody ApplicationEditDetailRequestDto requestDto,
-            Authentication authentication) throws IllegalAccessException {
+            Authentication authentication){
         ApplicationEditDetailResponseDto responseDto = new ApplicationEditDetailResponseDto();
         responseDto.setEditable(false);
         applicationService.getApplicationDetail(requestDto, responseDto, clubId,authentication);

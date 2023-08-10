@@ -11,6 +11,8 @@ import clubhouse.clubhouse.domain.application.dto.response.ApplyListResponseDto;
 import clubhouse.clubhouse.domain.application.dto.response.MyPageResponseDto;
 import clubhouse.clubhouse.domain.application.entity.Answer;
 import clubhouse.clubhouse.domain.application.entity.Application;
+import clubhouse.clubhouse.domain.application.exception.ApplicationAppException;
+import clubhouse.clubhouse.domain.application.exception.ErrorCode;
 import clubhouse.clubhouse.domain.application.repository.ApplicationRepository;
 import clubhouse.clubhouse.domain.club.service.ClubService;
 import clubhouse.clubhouse.domain.form.entity.Form;
@@ -49,7 +51,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     //지원서 제출(사용자)
     @Override
     @Transactional
-    public void apply(ApplyRequestDto applyRequestDto, Authentication authentication) throws IllegalAccessException {
+    public void apply(ApplyRequestDto applyRequestDto, Authentication authentication){
         Long formId = applyRequestDto.getFormId();
         List<Question> questions = formService.findAllQuestions(formId); //여기서 순서 맞춰줘야함
         List<String> answers = applyRequestDto.getAnswers();
@@ -64,7 +66,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         //이미 지원한 신청서가 있을 때는 에러
         Optional<Application> findAlreadyExistMember = applicationRepository.findByMemberAndForm(member, form);
         if (findAlreadyExistMember.isPresent()) {
-            throw new IllegalArgumentException("이미 신청서가 존재합니다");
+            throw new ApplicationAppException(ErrorCode.APPLICATION_EXIST, "이미 신청서가 존재합니다");
         }
 
         //값이 없는 답변이 있으면 예외 처리
@@ -82,7 +84,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     //지원서 수정
     @Override
     @Transactional
-    public void patchApply(ApplyRequestDto applyRequestDto, Long applicationId, Authentication authentication) throws IllegalAccessException {
+    public void patchApply(ApplyRequestDto applyRequestDto, Long applicationId, Authentication authentication) {
         List<String> answers = applyRequestDto.getAnswers();
 
         //지원서 찾기
@@ -96,7 +98,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
         //member 같은지 확인
         if (application.getMember() != member) {
-            throw new IllegalAccessException("본인 지원서 외는 수정할 수 없습니다");
+            throw new ApplicationAppException(ErrorCode.NOT_OWNER, "본인 지원서 외는 수정할 수 없습니다");
         }
 
         //값이 없는 답변이 있으면 예외 처리
@@ -190,13 +192,13 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Override
     @Transactional
-    public ApplicationEditDetailResponseDto getApplicationEditDetail(ApplicationEditDetailRequestDto requestDto, ApplicationEditDetailResponseDto responseDto, Authentication authentication) throws IllegalAccessException {
+    public ApplicationEditDetailResponseDto getApplicationEditDetail(ApplicationEditDetailRequestDto requestDto, ApplicationEditDetailResponseDto responseDto, Authentication authentication){
         Application application = findApplicationById(requestDto.getApplicationId());
         Form form = application.getForm();
         Member member = findMemberByEmail(authentication.getName());
 
         if (application.getMember() != member) {
-            throw new IllegalAccessException("해당 지원서의 작성자가 아닙니다");
+            throw new ApplicationAppException(ErrorCode.NOT_OWNER, "해당 지원서의 작성자가 아닙니다");
         }
 
         setQNALink(responseDto, application, form);
@@ -258,7 +260,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     private Member findMemberByEmail(String memberEmail) {
         return memberRepository.findByEmail(memberEmail)
-                .orElseThrow(()-> new IllegalArgumentException("회원정보가 잘못됐습니다"));
+                .orElseThrow(()-> new ApplicationAppException(ErrorCode.MEMBER_NOTFOUND,"멤버가 존재하지 않습니다"));
     }
 
     private void makeAnswer(List<Question> questions, List<String> answers, Application newApplication) {
@@ -274,7 +276,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         int index=1;
         for (String answer : answers) {
             if (answer.trim().equals("")) {
-                throw new IllegalArgumentException("입력되지 않은 질문이 있습니다("+index+"번째 칠문)");
+                throw new ApplicationAppException(ErrorCode.BLANK_EXIST, "입력되지 않은 질문이 있습니다(" + index + "번째 칠문)");
             }
             index++;
         }
@@ -282,13 +284,13 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     private Application findApplicationById(Long applicationId) {
         return applicationRepository.findById(applicationId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 지원서가 없습니다"));
+                .orElseThrow(() -> new ApplicationAppException(ErrorCode.APPLICATION_NOTFOUND, "지원서가 존재하지 않습니다"));
     }
 
 
-    private static void checkFormStatusClose(Form form) throws IllegalAccessException {
+    private static void checkFormStatusClose(Form form){
         if (form.getFormStatus()== FormStatus.CLOSING) {
-            throw new IllegalAccessException("종료됐습니다");
+            throw new ApplicationAppException(ErrorCode.FORM_CLOSED,"지원시간이 종료됐습니다");
         }
     }
 
@@ -305,7 +307,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     private Form findFormById(Long formId) {
         return formService.findById(formId)
-                .orElseThrow(() -> new IllegalArgumentException("해당하는 form이 없습니다"));
+                .orElseThrow(() -> new ApplicationAppException(ErrorCode.FORM_NOTFOUND,"해당 공고를 찾을 수 없습니다"));
     }
 
     private void setQNALink(ApplicationEditDetailResponseDto responseDto, Application application, Form form) {
