@@ -7,7 +7,7 @@ import lombok.Data;
 public class UserInfoForm {
     private String name;
     private Gender gender;
-    private int age; //테스트해야함 TODO
+    private int age;
     private String phoneNum;
     private String univAndMajor;
 }

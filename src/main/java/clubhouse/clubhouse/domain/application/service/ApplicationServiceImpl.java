@@ -123,10 +123,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         boolean isPass = Boolean.parseBoolean(requestDto.getIsPass());
         Application changedApplication = application.changeIsPass(isPass);
 
-        /**
-         * true일때 club에 멤버 넣기, false일때 멤버빼기 TODO
-         */
-        //clubService.changeMemberStatus(application.getMember(), clubId, isPass);
+        clubService.changeMemberStatus(application.getMember(), clubId, isPass);
 
         applicationRepository.save(changedApplication);
     }
@@ -234,8 +231,6 @@ public class ApplicationServiceImpl implements ApplicationService {
     //질문 리스트 출력
     @Override
     public ApplicationDetailResponseDto getFormQuestion(ApplicationDetailRequestDto requestDto, ApplicationDetailResponseDto responseDto, Long clubId, Authentication authentication) {
-        //멤버가 클럽에 속해있는지 확인해야한다. TODO
-
         List<String> questionContentList = new ArrayList<>();
         List<Question> questionList = formService.findAllQuestions(requestDto.getFormId());
         responseDto.setFormName(findFormById(requestDto.getFormId()).getTitle());
@@ -328,10 +323,8 @@ public class ApplicationServiceImpl implements ApplicationService {
         responseDto.setHttpStatus(HttpStatus.OK);
     }
 
-    //ToDO 수정해야함
     private void isAdmin(Long clubId, Authentication authentication) {
-        //boolean isAdmin = clubService.isAdmin(clubId, authentication.getName());
-        boolean isAdmin=true; //바꿔야함
+        boolean isAdmin = clubService.isAdmin(clubId, authentication.getName());
         if(!isAdmin) {
             throw new ApplicationAppException(ErrorCode.NOT_OWNER, "해당 클럽의 클럽장만 진행할 수 있습니다");
         }
