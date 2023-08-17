@@ -24,11 +24,15 @@ public class Question {
     @Column(name = "question_num")
     private Long questionNum;
 
+    @Column(name = "question_char_limit")
+    private Long charLimit;
+
     @Builder
-    public Question(String contents, Form form,Long questionNum){
+    public Question(String contents, Form form,Long questionNum, Long quesCharLimit){
         this.contents=contents;
         this.form=form;
         this.questionNum=questionNum;
+        this.charLimit = quesCharLimit;
     }
 
 }
