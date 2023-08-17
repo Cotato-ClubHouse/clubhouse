@@ -272,6 +272,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         }
     }
 
+    //TODO 프론트에서 해결할 수 있으면 하기
     private void checkAnswerLength(List<String> answers, List<Question> questions) {
         int index=1;
         for (String answer : answers) {
