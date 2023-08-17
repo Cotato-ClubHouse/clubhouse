@@ -2,6 +2,7 @@ package clubhouse.clubhouse.domain.member.entity;
 
 import clubhouse.clubhouse.domain.club.entity.Club;
 import clubhouse.clubhouse.domain.member.entity.Member;
+import clubhouse.clubhouse.domain.member.repository.MemberClubRepository;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -32,5 +33,10 @@ public class MemberClub {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "club_id")
 	private Club club;
+
+	public MemberClub (Member member, Club club) {
+		this.member = member;
+		this.club = club;
+	}
 
 }

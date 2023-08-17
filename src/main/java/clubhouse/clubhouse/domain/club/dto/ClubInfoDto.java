@@ -10,6 +10,8 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ClubInfoDto {
+    private String name;
+    private String intro;
     private List<ClubFormsForm> formList;
     private List<ClubMembersForm> memberList;
 
