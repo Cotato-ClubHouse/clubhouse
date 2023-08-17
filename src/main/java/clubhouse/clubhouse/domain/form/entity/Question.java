@@ -2,11 +2,14 @@ package clubhouse.clubhouse.domain.form.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 
 @Entity
 @Getter
 //@NoArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@DynamicInsert//columndefault 설정 관련
 public class Question {
 
     @Id
@@ -25,6 +28,7 @@ public class Question {
     private Long questionNum;
 
     @Column(name = "question_char_limit")
+    @ColumnDefault(value = "10000")
     private Long charLimit;
 
     @Builder
