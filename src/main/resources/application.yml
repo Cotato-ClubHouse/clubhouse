@@ -29,9 +29,14 @@ spring:
       mode: always
   config:
     import: application-key.yml
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
 #
 #logging:
 #  level:
 #    org:
 #      springframework: DEBUG
+
 
