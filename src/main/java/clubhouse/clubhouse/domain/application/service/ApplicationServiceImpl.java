@@ -61,6 +61,8 @@ public class ApplicationServiceImpl implements ApplicationService {
 
         checkFormStatusClose(form);
 
+        checkAnswerLength(answers, questions);
+
         Member member = findMemberByEmail(authentication.getName());
 
         //이미 지원한 신청서가 있을 때는 에러
@@ -73,9 +75,6 @@ public class ApplicationServiceImpl implements ApplicationService {
         if (questions.size() != answers.size()) {
             throw new ApplicationAppException(ErrorCode.DATA_ERROR, "모든 데이터가 넘어오지 않았습니다");
         }
-
-        //값이 없는 답변이 있으면 예외 처리
-        checkAllAnswerInput(answers); //모든 질문에 대한 답이 필수가 아니면 지우면 됨 TODO(현재는 모든 값 필수)
 
         //답변이 다 있으면 지원서 만들기
         Application newApplication = applicationRepository.save(Application.createApplication(LocalDateTime.now(), member, form, false));
@@ -92,11 +91,16 @@ public class ApplicationServiceImpl implements ApplicationService {
     public void patchApply(ApplyRequestDto applyRequestDto, Long applicationId, Authentication authentication) {
         List<String> answers = applyRequestDto.getAnswers();
 
+        List<Question> questions = formService.findAllQuestions(applyRequestDto.getFormId()); //여기서 순서 맞춰줘야함
+
         //지원서 찾기
         Application application = findApplicationById(applicationId);
         
         //이미 지난 공고인지 확인
         checkFormStatusClose(application.getForm());
+
+        //최대 길이 비교
+        checkAnswerLength(answers,questions);
 
         //멤버 찾기
         Member member = findMemberByEmail(authentication.getName());
@@ -105,9 +109,6 @@ public class ApplicationServiceImpl implements ApplicationService {
         if (application.getMember() != member) {
             throw new ApplicationAppException(ErrorCode.NOT_OWNER, "본인 지원서 외는 수정할 수 없습니다");
         }
-
-        //값이 없는 답변이 있으면 예외 처리
-        checkAllAnswerInput(answers);
 
         answerService.changeAnswer(application, answers);
     }
@@ -262,7 +263,6 @@ public class ApplicationServiceImpl implements ApplicationService {
         return memberRepository.findByEmail(memberEmail)
                 .orElseThrow(()-> new ApplicationAppException(ErrorCode.MEMBER_NOTFOUND,"멤버가 존재하지 않습니다"));
     }
-
     private void makeAnswer(List<Question> questions, List<String> answers, Application newApplication) {
         int i=0;
         for (String answerContent : answers) {
@@ -272,11 +272,11 @@ public class ApplicationServiceImpl implements ApplicationService {
         }
     }
 
-    private void checkAllAnswerInput(List<String> answers) {
+    private void checkAnswerLength(List<String> answers, List<Question> questions) {
         int index=1;
         for (String answer : answers) {
-            if (answer.trim().equals("")) {
-                throw new ApplicationAppException(ErrorCode.BLANK_EXIST, "입력되지 않은 질문이 있습니다(" + index + "번째 칠문)");
+            if (answer.trim().length()>questions.get(index-1).getCharLimit()) {
+                throw new ApplicationAppException(ErrorCode.BLANK_EXIST, "답변 길이 초과입니다(" + index + "번째 칠문)");
             }
             index++;
         }
