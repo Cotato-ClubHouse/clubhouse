@@ -15,7 +15,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class MypageServiceImpl {
+public class MypageServiceImpl implements MypageService {
 
     private final ClubRepository clubRepository;
     private final MemberClubRepository memberClubRepository;
@@ -41,7 +41,7 @@ public class MypageServiceImpl {
         List<Member> members = memberClubRepository.findAllByClub(club);
         List<ClubMembersForm> memberList = new ArrayList<>();
         for (Member m : members) {
-            memberList.add(new ClubMembersForm(m.getName(), m.getAge(m.getBirthDate()), m.getUniv(), m.getMajor()));
+            memberList.add(new ClubMembersForm(m.getName(), m.getAge(), m.getUniv(), m.getMajor()));
         }
         return new ClubInfoDto(club.getName(), club.getIntro(), formList, memberList);
     }

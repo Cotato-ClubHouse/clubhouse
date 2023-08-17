@@ -21,5 +21,4 @@ public class MyPageResponseDto {
 
     //가입 클럽 정보
     ClubListDto clubList;
-
 }
