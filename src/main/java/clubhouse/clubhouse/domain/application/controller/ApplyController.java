@@ -8,6 +8,7 @@ import clubhouse.clubhouse.domain.club.service.MypageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -23,9 +24,10 @@ public class ApplyController {
     @GetMapping("/{club_id}/apply")
     public ResponseEntity<ApplicationDetailResponseDto> getApplicationDetail(
             @RequestBody ApplicationDetailRequestDto requestDto,
-            @PathVariable("club_id") Long clubId) throws IllegalAccessException {
+            @PathVariable("club_id") Long clubId,
+            Authentication authentication){
         ApplicationDetailResponseDto responseDto = new ApplicationDetailResponseDto();
-        responseDto = applicationService.getFormQuestion(requestDto, responseDto, clubId);
+        responseDto = applicationService.getFormQuestion(requestDto, responseDto, clubId, authentication);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -36,9 +38,10 @@ public class ApplyController {
     @PostMapping("/{club_id}/apply")
     public ResponseEntity<ApplyResponseDto> saveAnswer(
             @PathVariable("club_id") Long clubId,
-            @RequestBody ApplyRequestDto requestDto) throws IllegalAccessException {
+            @RequestBody ApplyRequestDto requestDto,
+            Authentication authentication){
 
-        applicationService.apply(requestDto);
+        applicationService.apply(requestDto, authentication);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -48,10 +51,11 @@ public class ApplyController {
     //공고 수정하는 지원서 세부내용 GET
     @GetMapping("/mypage/getApplicationEditDetail")
     public ResponseEntity<ApplicationEditDetailResponseDto> getApplicationEditDetail(
-            @RequestBody ApplicationEditDetailRequestDto requestDto) throws IllegalAccessException {
+            @RequestBody ApplicationEditDetailRequestDto requestDto,
+            Authentication authentication){
         ApplicationEditDetailResponseDto responseDto = new ApplicationEditDetailResponseDto();
         responseDto.setEditable(true);
-        responseDto = applicationService.getApplicationEditDetail(requestDto, responseDto);
+        responseDto = applicationService.getApplicationEditDetail(requestDto, responseDto, authentication);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -63,8 +67,9 @@ public class ApplyController {
     public ResponseEntity<ApplyResponseDto> patchAnswer(
             @PathVariable("club_id") Long clubId,
             @RequestBody ApplyRequestDto requestDto,
-            @PathVariable("application_id") Long applicationId) throws IllegalAccessException {
-        applicationService.patchApply(requestDto, applicationId);
+            @PathVariable("application_id") Long applicationId,
+            Authentication authentication){
+        applicationService.patchApply(requestDto, applicationId,authentication);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -78,9 +83,10 @@ public class ApplyController {
     public ResponseEntity<ApplyResponseDto> changeIsPass(
             @PathVariable("club_id") Long clubId,
             @RequestBody ApplyChangeIsPassRequestDto requestDto,
-            @PathVariable("application_id") Long applicationId) {
+            @PathVariable("application_id") Long applicationId,
+            Authentication authentication) {
 
-        applicationService.changeIsPass(requestDto, clubId, applicationId);
+        applicationService.changeIsPass(requestDto, clubId, applicationId, authentication);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -91,10 +97,11 @@ public class ApplyController {
     //공고 등록된 전체 지원서들 Get(남기훈)
     @GetMapping("/{club_id}/applyList")
     public ResponseEntity<ApplyListResponseDto> getApplyList(
+            Authentication authentication,
             @PathVariable("club_id") Long clubId,
-            @RequestBody ApplyListRequestDto requestDto) throws IllegalAccessException {
+            @RequestBody ApplyListRequestDto requestDto){
 
-        ApplyListResponseDto responseDto = applicationService.getApplicationList(requestDto);
+        ApplyListResponseDto responseDto = applicationService.getApplicationList(requestDto,clubId ,authentication);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -105,10 +112,11 @@ public class ApplyController {
     @GetMapping("/{club_id}/applyDetail")
     public ResponseEntity<ApplicationEditDetailResponseDto> getApplyList(
             @PathVariable("club_id") Long clubId,
-            @RequestBody ApplicationEditDetailRequestDto requestDto) throws IllegalAccessException {
+            @RequestBody ApplicationEditDetailRequestDto requestDto,
+            Authentication authentication){
         ApplicationEditDetailResponseDto responseDto = new ApplicationEditDetailResponseDto();
         responseDto.setEditable(false);
-        applicationService.getApplicationDetail(requestDto, responseDto);
+        applicationService.getApplicationDetail(requestDto, responseDto, clubId,authentication);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -118,10 +126,10 @@ public class ApplyController {
     //My Page
     @GetMapping("/mypage")
     public ResponseEntity<MyPageResponseDto> getUserApplyList(
-            @RequestBody MyPageRequestDto requestDto){
-        MyPageResponseDto responseDto = applicationService.getMyPage(requestDto);
+            Authentication authentication){
+        MyPageResponseDto responseDto = applicationService.getMyPage(authentication);
         ClubListDto clubList = mypageService.getClubList();
-        responseDto.setClubListDto(clubList);
+        responseDto.setClubList(clubList);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
