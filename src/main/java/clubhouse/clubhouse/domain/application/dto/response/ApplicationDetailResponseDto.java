@@ -7,7 +7,6 @@ import java.util.List;
 
 @Data
 public class ApplicationDetailResponseDto {
-    private HttpStatus httpStatus;
     private String formName;
     private List<String> qeustionList;
 

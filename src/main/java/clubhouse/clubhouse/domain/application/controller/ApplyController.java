@@ -37,16 +37,14 @@ public class ApplyController {
 
     //답변 데이터가 들어왔을 때 answer 저장 + application 저장(남기훈)
     @PostMapping("/{club_id}/apply")
-    public ResponseEntity<ApplyResponseDto> saveAnswer(
+    public ResponseEntity<String> saveAnswer(
             @PathVariable("club_id") Long clubId,
             @RequestBody ApplyRequestDto requestDto,
             Authentication authentication){
 
         applicationService.apply(requestDto, authentication);
 
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(new ApplyResponseDto(HttpStatus.CREATED));
+        return ResponseEntity.ok("application created");
     }
 
     //공고 수정하는 지원서 세부내용 GET
@@ -63,25 +61,23 @@ public class ApplyController {
                 .body(responseDto);
     }
 
-    //공고 수정 Patch(남기훈)
+    //지원서 수정 Patch(남기훈)
     @PatchMapping("{club_id}/apply/{application_id}")
-    public ResponseEntity<ApplyResponseDto> patchAnswer(
+    public ResponseEntity<String> patchAnswer(
             @PathVariable("club_id") Long clubId,
             @RequestBody ApplyRequestDto requestDto,
             @PathVariable("application_id") Long applicationId,
             Authentication authentication){
         applicationService.patchApply(requestDto, applicationId,authentication);
 
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(new ApplyResponseDto(HttpStatus.OK));
+        return ResponseEntity.ok("application fixed");
     }
 
 
 
     //지원자의 상태를 변경
     @PatchMapping("{club_id}/applyList/{application_id}")
-    public ResponseEntity<ApplyResponseDto> changeIsPass(
+    public ResponseEntity<String> changeIsPass(
             @PathVariable("club_id") Long clubId,
             @RequestBody ApplyChangeIsPassRequestDto requestDto,
             @PathVariable("application_id") Long applicationId,
@@ -89,9 +85,7 @@ public class ApplyController {
 
         applicationService.changeIsPass(requestDto, clubId, applicationId, authentication);
 
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(new ApplyResponseDto(HttpStatus.OK));
+        return ResponseEntity.ok("status changed");
     }
 
 

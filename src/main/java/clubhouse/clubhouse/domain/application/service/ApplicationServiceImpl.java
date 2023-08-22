@@ -144,7 +144,6 @@ public class ApplicationServiceImpl implements ApplicationService {
         List<Application> applyList = applicationRepository.findAllByForm(form); //0이상의 지원서
 
         ApplyListResponseDto responseDto = new ApplyListResponseDto();
-        responseDto.setHttpStatus(HttpStatus.OK);
 
 
         List<ApplyListResponseForm> responseFormList = new ArrayList<>();
@@ -222,7 +221,6 @@ public class ApplicationServiceImpl implements ApplicationService {
         //QNA 링크하기
         setQNALink(responseDto,application,application.getForm());
 
-        responseDto.setHttpStatus(HttpStatus.OK);
 
         return responseDto;
 
@@ -240,7 +238,6 @@ public class ApplicationServiceImpl implements ApplicationService {
         }
         responseDto.setQeustionList(questionContentList);
         responseDto.setFormId(formId);
-        responseDto.setHttpStatus(HttpStatus.OK);
 
 
         return responseDto;
@@ -320,7 +317,6 @@ public class ApplicationServiceImpl implements ApplicationService {
             linkQuestionAndAnswer(application, question,qnaList);
         }
         responseDto.setQnaList(qnaList);
-        responseDto.setHttpStatus(HttpStatus.OK);
     }
 
     private void isAdmin(Long clubId, Authentication authentication) {
