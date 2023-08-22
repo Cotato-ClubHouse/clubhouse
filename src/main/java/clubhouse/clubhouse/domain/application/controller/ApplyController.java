@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/v1")
 @RequiredArgsConstructor
+@CrossOrigin
 public class ApplyController {
 
     private final ApplicationService applicationService;
@@ -21,13 +22,13 @@ public class ApplyController {
     private final MypageService mypageService;
 
     //처음 답변 작성하는 폼
-    @GetMapping("/{club_id}/apply")
+    @GetMapping("/{club_id}/{form_id}/apply")
     public ResponseEntity<ApplicationDetailResponseDto> getApplicationDetail(
-            @RequestBody ApplicationDetailRequestDto requestDto,
+            @PathVariable("form_id") Long formId,
             @PathVariable("club_id") Long clubId,
             Authentication authentication){
         ApplicationDetailResponseDto responseDto = new ApplicationDetailResponseDto();
-        responseDto = applicationService.getFormQuestion(requestDto, responseDto, clubId, authentication);
+        responseDto = applicationService.getFormQuestion(formId, responseDto, clubId, authentication);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -49,13 +50,13 @@ public class ApplyController {
     }
 
     //공고 수정하는 지원서 세부내용 GET
-    @GetMapping("/mypage/getApplicationEditDetail")
+    @GetMapping("/mypage/{application_id}/getApplicationEditDetail")
     public ResponseEntity<ApplicationEditDetailResponseDto> getApplicationEditDetail(
-            @RequestBody ApplicationEditDetailRequestDto requestDto,
+            @PathVariable("application_id") Long applicationId,
             Authentication authentication){
         ApplicationEditDetailResponseDto responseDto = new ApplicationEditDetailResponseDto();
         responseDto.setEditable(true);
-        responseDto = applicationService.getApplicationEditDetail(requestDto, responseDto, authentication);
+        responseDto = applicationService.getApplicationEditDetail(applicationId, responseDto, authentication);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -95,13 +96,13 @@ public class ApplyController {
 
 
     //공고 등록된 전체 지원서들 Get(남기훈)
-    @GetMapping("/{club_id}/applyList")
+    @GetMapping("/{club_id}/{form_id}/applyList")
     public ResponseEntity<ApplyListResponseDto> getApplyList(
             Authentication authentication,
             @PathVariable("club_id") Long clubId,
-            @RequestBody ApplyListRequestDto requestDto){
+            @PathVariable("form_id") Long form_id){
 
-        ApplyListResponseDto responseDto = applicationService.getApplicationList(requestDto,clubId ,authentication);
+        ApplyListResponseDto responseDto = applicationService.getApplicationList(form_id,clubId ,authentication);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -109,14 +110,14 @@ public class ApplyController {
     }
 
     //동아리 회장이 application 세부사항 보기
-    @GetMapping("/{club_id}/applyDetail")
+    @GetMapping("/{club_id}/{application_id}/applyDetail")
     public ResponseEntity<ApplicationEditDetailResponseDto> getApplyList(
             @PathVariable("club_id") Long clubId,
-            @RequestBody ApplicationEditDetailRequestDto requestDto,
+            @PathVariable("application_id") Long applicationId,
             Authentication authentication){
         ApplicationEditDetailResponseDto responseDto = new ApplicationEditDetailResponseDto();
         responseDto.setEditable(false);
-        applicationService.getApplicationDetail(requestDto, responseDto, clubId,authentication);
+        applicationService.getApplicationDetail(applicationId, responseDto, clubId,authentication);
 
         return ResponseEntity
                 .status(HttpStatus.OK)

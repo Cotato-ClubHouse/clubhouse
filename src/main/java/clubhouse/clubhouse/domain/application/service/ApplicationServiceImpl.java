@@ -134,10 +134,9 @@ public class ApplicationServiceImpl implements ApplicationService {
     //리스트 출력
     @Override
     @Transactional
-    public ApplyListResponseDto getApplicationList(ApplyListRequestDto requestDto, Long clubId,Authentication authentication) {
+    public ApplyListResponseDto getApplicationList(Long formId, Long clubId,Authentication authentication) {
         isAdmin(clubId, authentication);
 
-        Long formId = requestDto.getFormId();
         log.info("getApplicationList Start");
 
         Form form = findFormById(formId);
@@ -195,8 +194,8 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Override
     @Transactional
-    public ApplicationEditDetailResponseDto getApplicationEditDetail(ApplicationEditDetailRequestDto requestDto, ApplicationEditDetailResponseDto responseDto, Authentication authentication){
-        Application application = findApplicationById(requestDto.getApplicationId());
+    public ApplicationEditDetailResponseDto getApplicationEditDetail(Long applicationId, ApplicationEditDetailResponseDto responseDto, Authentication authentication){
+        Application application = findApplicationById(applicationId);
         Form form = application.getForm();
         Member member = findMemberByEmail(authentication.getName());
 
@@ -211,10 +210,10 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     //동아리 회장이 신청서의 세부목록을 보여준다
     @Override
-    public ApplicationEditDetailResponseDto getApplicationDetail(ApplicationEditDetailRequestDto requestDto, ApplicationEditDetailResponseDto responseDto, Long clubId,Authentication authentication){
+    public ApplicationEditDetailResponseDto getApplicationDetail(Long applicationId, ApplicationEditDetailResponseDto responseDto, Long clubId,Authentication authentication){
         isAdmin(clubId, authentication);
 
-        Application application = findApplicationById(requestDto.getApplicationId());
+        Application application = findApplicationById(applicationId);
         Member member = application.getMember();
 
         //회원 정보 작성
@@ -231,16 +230,16 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     //질문 리스트 출력
     @Override
-    public ApplicationDetailResponseDto getFormQuestion(ApplicationDetailRequestDto requestDto, ApplicationDetailResponseDto responseDto, Long clubId, Authentication authentication) {
+    public ApplicationDetailResponseDto getFormQuestion(Long formId, ApplicationDetailResponseDto responseDto, Long clubId, Authentication authentication) {
         List<String> questionContentList = new ArrayList<>();
-        List<Question> questionList = formService.findAllQuestions(requestDto.getFormId());
-        responseDto.setFormName(findFormById(requestDto.getFormId()).getTitle());
+        List<Question> questionList = formService.findAllQuestions(formId);
+        responseDto.setFormName(findFormById(formId).getTitle());
 
         for (Question q : questionList) {
             questionContentList.add(q.getContents());
         }
         responseDto.setQeustionList(questionContentList);
-        responseDto.setFormId(requestDto.getFormId());
+        responseDto.setFormId(formId);
         responseDto.setHttpStatus(HttpStatus.OK);
 
 

@@ -12,15 +12,15 @@ public interface ApplicationService {
 
     void patchApply(ApplyRequestDto applyRequestDto, Long applicationId, Authentication authentication);
 
-    ApplyListResponseDto getApplicationList(ApplyListRequestDto requestDto, Long clubId ,Authentication authentication);
+    ApplyListResponseDto getApplicationList(Long formId, Long clubId ,Authentication authentication);
 
     void changeIsPass(ApplyChangeIsPassRequestDto requestDto, Long clubId , Long applicationId, Authentication authentication);
 
     MyPageResponseDto getMyPage(Authentication authentication);
 
-    ApplicationEditDetailResponseDto getApplicationEditDetail(ApplicationEditDetailRequestDto requestDto, ApplicationEditDetailResponseDto responseDto, Authentication authentication);
+    ApplicationEditDetailResponseDto getApplicationEditDetail(Long applicationId, ApplicationEditDetailResponseDto responseDto, Authentication authentication);
 
-    ApplicationDetailResponseDto getFormQuestion(ApplicationDetailRequestDto requestDto, ApplicationDetailResponseDto responseDto, Long clubId, Authentication authentication);
+    ApplicationDetailResponseDto getFormQuestion(Long formId, ApplicationDetailResponseDto responseDto, Long clubId, Authentication authentication);
 
-    ApplicationEditDetailResponseDto getApplicationDetail(ApplicationEditDetailRequestDto requestDto, ApplicationEditDetailResponseDto responseDto,Long clubId, Authentication authentication);
+    ApplicationEditDetailResponseDto getApplicationDetail(Long applicationId, ApplicationEditDetailResponseDto responseDto,Long clubId, Authentication authentication);
 }
