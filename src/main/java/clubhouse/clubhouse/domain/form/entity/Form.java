@@ -26,13 +26,13 @@ public class Form {
     @Column(name = "form_title",nullable = false)
     private String title;
 
-    @Column(name = "form_content")
+    @Column(name = "form_content",nullable = false)
     private String content;
 
-    @Column(name = "form_deadline")
+    @Column(name = "form_deadline",nullable = false)
     private LocalDateTime deadline;
 
-    @Column(name = "photo_url")
+    @Column(name = "photo_url",nullable = false)
     private String photoUrl;
 
     @ManyToOne(fetch = FetchType.LAZY)

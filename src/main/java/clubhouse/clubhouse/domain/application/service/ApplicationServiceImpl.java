@@ -17,8 +17,9 @@ import clubhouse.clubhouse.domain.form.entity.Form;
 import clubhouse.clubhouse.domain.form.entity.FormStatus;
 import clubhouse.clubhouse.domain.form.entity.Question;
 import clubhouse.clubhouse.domain.form.service.FormService;
-import clubhouse.clubhouse.domain.member.MemberRepository;
+
 import clubhouse.clubhouse.domain.member.entity.Member;
+import clubhouse.clubhouse.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
