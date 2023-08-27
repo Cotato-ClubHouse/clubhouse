@@ -4,6 +4,7 @@ package clubhouse.clubhouse.domain.form.service;
 import clubhouse.clubhouse.domain.form.dto.*;
 import clubhouse.clubhouse.domain.form.entity.Form;
 import clubhouse.clubhouse.domain.form.entity.Question;
+import clubhouse.clubhouse.domain.form.exception.ImageException;
 
 
 import java.io.IOException;
@@ -13,7 +14,7 @@ import java.util.Optional;
 public interface FormService {
 
     //일단 클럽id로 생성하게 설정 추후에
-    ResponseForm createForm(RequestFormDto formDto) throws IOException;
+    ResponseForm createForm(RequestFormDto formDto) throws ImageException;
 
     /**
      * id로 하나 찾기
@@ -54,7 +55,7 @@ public interface FormService {
     /**
      * 공고 수정
      * patch-> 원하는 항목 수정
-     * 제목, 홍보글, 마감일, 사진 수정?
+     * Todo 제목, 홍보글, 마감일, 사진 개별 수정할 수 있게!
      */
     ResponsePatchForm patchForm(Long formId,RequestPatchForm requestPatchForm);
 
