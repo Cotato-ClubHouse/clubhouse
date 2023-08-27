@@ -8,6 +8,7 @@ import clubhouse.clubhouse.domain.member.entity.Member;
 import clubhouse.clubhouse.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -19,6 +20,7 @@ public class ClubServiceImpl implements ClubService {
     private final MemberRepository memberRepository;
 
     // TODO: 추후에 이메일을 jwt에서 가져오게끔 수정할 예정
+    @Transactional
     public Club saveClub(ClubRequestDto requestDto) {
         if (!clubRepository.existsByName(requestDto.getClubName())
                 && memberRepository.existsByEmail(requestDto.getClubAdminId())) {

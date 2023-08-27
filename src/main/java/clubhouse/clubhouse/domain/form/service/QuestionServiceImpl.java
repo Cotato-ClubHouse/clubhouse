@@ -34,7 +34,7 @@ public class QuestionServiceImpl implements QuestionService{
 
     @Override
     public List<Question> findAllQuesByFormId(Long formId) {
-        return null;
+        return questionRepository.findAllByFormId(formId);
     }
 
 

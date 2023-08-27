@@ -120,7 +120,7 @@ public class ApplyController {
     public ResponseEntity<MyPageResponseDto> getUserApplyList(
             @RequestBody MyPageRequestDto requestDto){
         MyPageResponseDto responseDto = applicationService.getMyPage(requestDto);
-        ClubListDto clubList = mypageService.getClubList();
+        ClubListDto clubList = mypageService.getClubList(requestDto.getMemberEmail());
         responseDto.setClubListDto(clubList);
 
         return ResponseEntity

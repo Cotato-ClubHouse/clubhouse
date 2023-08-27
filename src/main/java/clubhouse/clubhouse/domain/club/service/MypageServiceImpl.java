@@ -6,7 +6,9 @@ import clubhouse.clubhouse.domain.club.repository.ClubRepository;
 import clubhouse.clubhouse.domain.form.entity.Form;
 import clubhouse.clubhouse.domain.form.repository.FormRepository;
 import clubhouse.clubhouse.domain.member.entity.Member;
+import clubhouse.clubhouse.domain.member.entity.MemberClub;
 import clubhouse.clubhouse.domain.member.repository.MemberClubRepository;
+import clubhouse.clubhouse.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,9 +22,10 @@ public class MypageServiceImpl implements MypageService{
     private final ClubRepository clubRepository;
     private final MemberClubRepository memberClubRepository;
     private final FormRepository formRepository;
+//    private final MemberRepository memberRepository;
 
-    public ClubListDto getClubList() {
-        List<Club> clubs = clubRepository.findAllByAdminId("email123@gmail.com");
+    public ClubListDto getClubList(String email) {
+        List<Club> clubs = clubRepository.findAllByAdminId(email);
         List<ClubListForm> clubList = new ArrayList<>();
         for (Club c : clubs) {
             clubList.add(new ClubListForm(c.getId(), c.getName()));
@@ -38,10 +41,14 @@ public class MypageServiceImpl implements MypageService{
         for (Form f : forms) {
             formList.add(new ClubFormsForm(f.getPhotoUrl(), f.getTitle(), f.getFormStatus()));
         }
-        List<Member> members = memberClubRepository.findAllByClub(club);
+        List<Member> members = new ArrayList<>();
+        List<MemberClub> memberClub = memberClubRepository.findAllByClub(club);
+        for(MemberClub m : memberClub){
+            members.add(m.getMember());
+        }
         List<ClubMembersForm> memberList = new ArrayList<>();
         for (Member m : members) {
-            //memberList.add(new ClubMembersForm(m.getName(), m.getAge(), m.getUniv(), m.getMajor()));
+            memberList.add(new ClubMembersForm(m.getName(), (long) m.getAge(m.getBirthDate()), m.getUniv(), m.getMajor()));
         }
         return new ClubInfoDto(formList, memberList);
     }

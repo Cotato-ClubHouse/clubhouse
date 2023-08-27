@@ -16,5 +16,6 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     Optional<Member> findByRefreshToken(String RefreshToken);
 
     boolean existsByEmail(String email); //이민영이 추가한 메소드
+
 }
 

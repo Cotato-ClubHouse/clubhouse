@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface MemberClubRepository extends JpaRepository<MemberClub, Long> {
-    List<Member> findAllByClub(Club club);
+//    List<Member> findAllByClub(Club club);
+    List<MemberClub> findAllByClub(Club club);
 
 }
