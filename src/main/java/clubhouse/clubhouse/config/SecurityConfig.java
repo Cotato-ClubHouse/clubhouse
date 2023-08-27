@@ -1,6 +1,5 @@
-package clubhouse.clubhouse.domain.member.config;
+package clubhouse.clubhouse.config;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,6 +9,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import clubhouse.clubhouse.utils.JwtUtil;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +18,7 @@ import lombok.RequiredArgsConstructor;
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
-public class SecurityConfig {
+public class SecurityConfig implements WebMvcConfigurer {
 
 	private final JwtUtil jwtUtil;
 
@@ -33,6 +34,7 @@ public class SecurityConfig {
 				new AntPathRequestMatcher("/v1/users/join"),
 				new AntPathRequestMatcher("/v1/users/login"),
 				new AntPathRequestMatcher("/v1/users/reissue"),
+				//todo. 공고 리스트 페이지 추가 허용
 				PathRequest.toH2Console()).permitAll()
 			.anyRequest().authenticated()
 			.and()
@@ -43,5 +45,13 @@ public class SecurityConfig {
 			.addFilterBefore(new JwtFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
 		return httpSecurity.getOrBuild();
+	}
+	@Override
+	public void addCorsMappings(CorsRegistry registry) {
+		registry.addMapping("/**")
+			.allowedOrigins("*")
+			.allowedMethods("*")
+			.allowedHeaders("*")
+			.exposedHeaders("accessToken");
 	}
 }

@@ -1,4 +1,4 @@
-package clubhouse.clubhouse.domain.member.config;
+package clubhouse.clubhouse.config;
 
 import java.io.IOException;
 import java.util.List;
@@ -8,10 +8,12 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import clubhouse.clubhouse.domain.member.service.MemberService;
 import clubhouse.clubhouse.utils.JwtUtil;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -40,9 +42,13 @@ public class JwtFilter extends OncePerRequestFilter {
 
 		String token = authorization.split(" ")[1];
 
-		if (jwtUtil.isExpired(token)) {
-			log.error("Token이 만료 되었습니다.");
-			filterChain.doFilter(request, response);
+		try {
+			if (jwtUtil.isExpired(token)) {
+				throw new ExpiredJwtException(null, null, "Token이 만료 되었습니다.");
+			}
+		} catch (ExpiredJwtException e) {
+			log.info("Token이 만료 되었습니다.");
+			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			return;
 		}
 
