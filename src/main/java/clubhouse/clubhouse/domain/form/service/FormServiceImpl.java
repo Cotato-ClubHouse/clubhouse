@@ -5,6 +5,9 @@ import clubhouse.clubhouse.domain.club.repository.ClubRepository;
 import clubhouse.clubhouse.domain.form.dto.*;
 import clubhouse.clubhouse.domain.form.entity.Form;
 import clubhouse.clubhouse.domain.form.entity.Question;
+import clubhouse.clubhouse.domain.form.exception.ErrorCode;
+import clubhouse.clubhouse.domain.form.exception.FormAppException;
+import clubhouse.clubhouse.domain.form.exception.ImageException;
 import clubhouse.clubhouse.domain.form.repository.FormRepository;
 import clubhouse.clubhouse.global.S3.S3Uploader;
 import lombok.RequiredArgsConstructor;
@@ -36,7 +39,7 @@ public class FormServiceImpl implements FormService {
 
     @Override
     @Transactional
-    public ResponseForm createForm(RequestFormDto formDto) throws IOException {
+    public ResponseForm createForm(RequestFormDto formDto) throws ImageException {
         Optional<Club> club = clubRepository.findById(formDto.getClubId());
 
         log.info("form service");
@@ -103,8 +106,11 @@ public class FormServiceImpl implements FormService {
 
     @Override
     public ResponseFormDetails getFormDetails(Long formId) {
-        Form form = formRepository.findById(formId).get();
-        Optional<Club> club = clubRepository.findById(form.getClub().getId());
+        Form form = formRepository.findById(formId)
+                .orElseThrow(()->new FormAppException(ErrorCode.FORM_NOT_FOUND));
+
+        Club club = clubRepository.findById(form.getClub().getId())
+                .orElseThrow(()->new FormAppException(ErrorCode.CLUB_NOT_FOUND));
 
         log.info("formPhotoUrl {}",form.getPhotoUrl());
 
@@ -113,17 +119,16 @@ public class FormServiceImpl implements FormService {
 
         Long remainDays = ChronoUnit.DAYS.between(currentDay,endDay);
 
-        ResponseFormDetails result = ResponseFormDetails.builder()
+        return ResponseFormDetails.builder()
                 .title(form.getTitle())
                 .content(form.getContent())
                 .deadLine(form.getDeadline())
                 .photoUrl(form.getPhotoUrl())
-                .clubName(club.get().getName())
-                .categoryName(club.get().getCategoryName())
+                .clubName(club.getName())
+                .categoryName(club.getCategoryName())
                 .remainDays(remainDays)
+                .clubIntro(club.getIntro())
                 .build();
-
-        return result;
     }
 
     @Override
@@ -133,13 +138,15 @@ public class FormServiceImpl implements FormService {
         questionService.deleteAllQuesByFormId(formId);
         formRepository.deleteById(formId);
 
+
     }
 
     @Override
     @Transactional
     public ResponsePatchForm patchForm(Long formId, RequestPatchForm requestPatchForm) {
-        Optional<Form> form = formRepository.findById(formId);
-        Form formValue = form.get();
+        Form formValue = formRepository.findById(formId)
+                .orElseThrow(()->new FormAppException(ErrorCode.FORM_NOT_FOUND));
+
         
         if(requestPatchForm.getTitle()==null){
             requestPatchForm.setTitle(formValue.getTitle());
@@ -150,22 +157,20 @@ public class FormServiceImpl implements FormService {
         if(requestPatchForm.getFormStatus()==null){
             requestPatchForm.setFormStatus(formValue.getFormStatus());
         }
-        
-        form.get().update(requestPatchForm.getTitle(),requestPatchForm.getContent(),requestPatchForm.getFormStatus());
+
+        formValue.update(requestPatchForm.getTitle(),requestPatchForm.getContent(),requestPatchForm.getFormStatus());
 
         //반환값만들기
-        ResponsePatchForm returnValue = ResponsePatchForm.builder()
-                .title(form.get().getTitle())
-                .content(form.get().getContent())
-                .formStatus(form.get().getFormStatus())
-                .build();
 
-        return returnValue;
+        return ResponsePatchForm.builder()
+                .title(formValue.getTitle())
+                .content(formValue.getContent())
+                .formStatus(formValue.getFormStatus())
+                .build();
     }
 
     @Override
     public List<Question> findAllQuestions(Long formId) {
-        List<Question> returnValue = questionService.findAllQuesByFormId(formId);
-        return returnValue;
+        return questionService.findAllQuesByFormId(formId);
     }
 }

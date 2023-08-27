@@ -26,6 +26,7 @@ public class QuestionServiceImpl implements QuestionService{
                 .contents(question.getContent())
                 .questionNum(question.getQuesNum())
                 .form(form)
+                .quesCharLimit(question.getCharLimit())
                 .build();
         log.info("new form created");
         return questionRepository.save(result);
@@ -34,7 +35,7 @@ public class QuestionServiceImpl implements QuestionService{
 
     @Override
     public List<Question> findAllQuesByFormId(Long formId) {
-        return null;
+        return questionRepository.findAllByFormId(formId);
     }
 
 
