@@ -1,6 +1,7 @@
 package clubhouse.clubhouse.domain.club.service;
 
 import clubhouse.clubhouse.domain.club.dto.ClubRequestDto;
+import clubhouse.clubhouse.domain.club.entity.CategoryName;
 import clubhouse.clubhouse.domain.club.entity.Club;
 import clubhouse.clubhouse.domain.club.repository.ClubRepository;
 import clubhouse.clubhouse.domain.member.entity.Member;
@@ -23,7 +24,8 @@ public class ClubServiceImpl implements ClubService {
     public Club saveClub(ClubRequestDto requestDto) {
         if (!clubRepository.existsByName(requestDto.getClubName())
                 && memberRepository.existsByEmail(requestDto.getClubAdminId())) {
-            Club club = new Club(requestDto.getClubName(), requestDto.getCategoryName(), requestDto.getClubAdminId(), requestDto.getClubIntro());
+            CategoryName categoryName = CategoryName.valueOf(requestDto.getCategoryName());
+            Club club = new Club(requestDto.getClubName(), categoryName, requestDto.getClubAdminId(), requestDto.getClubIntro());
             return clubRepository.save(club);
         } else return null;
     }

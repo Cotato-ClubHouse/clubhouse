@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 //@Builder
 public class ClubRequestDto {
     String clubName;
-    CategoryName categoryName;
+    String categoryName;
     String clubAdminId;
     String clubIntro;
 }

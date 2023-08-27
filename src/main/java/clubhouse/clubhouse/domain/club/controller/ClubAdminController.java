@@ -1,5 +1,6 @@
 package clubhouse.clubhouse.domain.club.controller;
 
+import clubhouse.clubhouse.domain.club.dto.ClubInfoDto;
 import clubhouse.clubhouse.domain.club.service.MypageServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,9 +16,8 @@ public class ClubAdminController {
     private final MypageServiceImpl mypageService;
 
     @GetMapping("/{clubId}")
-    public ResponseEntity<String> getClubInfo(@PathVariable long clubId){
-        mypageService.getClubInfo(clubId);
-        return ResponseEntity.ok("Club Members loaded");
+    public ResponseEntity<ClubInfoDto> getClubInfo(@PathVariable long clubId){
+        return ResponseEntity.ok(mypageService.getClubInfo(clubId));
     }
 
 
