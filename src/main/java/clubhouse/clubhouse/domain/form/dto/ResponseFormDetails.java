@@ -17,4 +17,5 @@ public class ResponseFormDetails {
     private String photoUrl;
     private CategoryName categoryName;
     private String clubName;
+    private String clubIntro;
 }
