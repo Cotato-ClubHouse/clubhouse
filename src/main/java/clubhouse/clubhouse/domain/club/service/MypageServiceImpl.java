@@ -22,7 +22,7 @@ public class MypageServiceImpl implements MypageService{
     private final ClubRepository clubRepository;
     private final MemberClubRepository memberClubRepository;
     private final FormRepository formRepository;
-//    private final MemberRepository memberRepository;
+    private final MemberRepository memberRepository;
 
     public ClubListDto getClubList(String email) {
         List<Club> clubs = clubRepository.findAllByAdminId(email);
@@ -48,8 +48,8 @@ public class MypageServiceImpl implements MypageService{
         }
         List<ClubMembersForm> memberList = new ArrayList<>();
         for (Member m : members) {
-            memberList.add(new ClubMembersForm(m.getName(), (long) m.getAge(m.getBirthDate()), m.getUniv(), m.getMajor()));
+            memberList.add(new ClubMembersForm(m.getName(), m.getAge(), m.getUniv(), m.getMajor()));
         }
-        return new ClubInfoDto(formList, memberList);
+        return new ClubInfoDto(club.getName(), club.getIntro(), formList, memberList);
     }
 }
