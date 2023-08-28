@@ -26,7 +26,7 @@ public class S3Uploader {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-    public String uploadFiles(MultipartFile multipartFile, String dirName) throws IOException {
+    public String uploadFiles(MultipartFile multipartFile, String dirName) throws ImageException {
         log.info("upload Files {}",multipartFile);
 
         File uploadFile = convert(multipartFile)

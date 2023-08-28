@@ -1,4 +1,4 @@
-package clubhouse.clubhouse.domain.member.config;
+package clubhouse.clubhouse.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

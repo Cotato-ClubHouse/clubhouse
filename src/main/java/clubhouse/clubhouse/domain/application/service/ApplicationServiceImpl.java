@@ -47,7 +47,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     private final ClubService clubService;
 
-    
+
     //지원서 제출(사용자)
     @Override
     @Transactional
@@ -70,7 +70,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         if (findAlreadyExistMember.isPresent()) {
             throw new ApplicationAppException(ErrorCode.APPLICATION_EXIST, "이미 작성한 신청서가 존재합니다");
         }
-         
+
         //Front에서 값이 없어도 ""로 넘기기는 해야한다
         if (questions.size() != answers.size()) {
             throw new ApplicationAppException(ErrorCode.DATA_ERROR, "모든 데이터가 넘어오지 않았습니다");
