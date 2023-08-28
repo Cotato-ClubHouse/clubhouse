@@ -6,12 +6,14 @@ import clubhouse.clubhouse.domain.application.service.ApplicationService;
 import clubhouse.clubhouse.domain.club.dto.ClubListDto;
 import clubhouse.clubhouse.domain.club.service.MypageService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@Slf4j
 @RequestMapping("/v1")
 @RequiredArgsConstructor
 @CrossOrigin
@@ -123,7 +125,7 @@ public class ApplyController {
     public ResponseEntity<MyPageResponseDto> getUserApplyList(
             Authentication authentication){
         MyPageResponseDto responseDto = applicationService.getMyPage(authentication);
-        ClubListDto clubList = mypageService.getClubList();
+        ClubListDto clubList = mypageService.getClubList(authentication.getName());
         responseDto.setClubList(clubList);
 
         return ResponseEntity

@@ -9,5 +9,6 @@ import java.util.List;
 @Data
 public class ApplyListResponseDto {
     String formName;
+    String formPhotoUrl;
     List<ApplyListResponseForm> applicationList;
 }

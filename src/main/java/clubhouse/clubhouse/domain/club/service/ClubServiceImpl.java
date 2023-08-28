@@ -52,7 +52,7 @@ public class ClubServiceImpl implements ClubService {
         Club club = clubRepository.findById(clubId)
                 .orElseThrow(()->new RuntimeException("RuntimeException"));
         String adminId = club.getAdminId();
-        if (adminId == memberEmail) {
+        if (adminId.equals(memberEmail)) {
             return true;
         } else return false;
     }

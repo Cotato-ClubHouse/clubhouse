@@ -135,6 +135,16 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     @Transactional
     public ApplyListResponseDto getApplicationList(Long formId, Long clubId,Authentication authentication) {
+        //여기부터 가짜를 위한 데이터 삭제해야함
+/*        ApplyListResponseDto responseDtoTest = new ApplyListResponseDto();
+        responseDtoTest.setFormName("formName");
+        List<ApplyListResponseForm> responseFormListTest = new ArrayList<>();
+        responseFormListTest.add(new ApplyListResponseForm("name",20,"univ",false, 1L));
+        responseFormListTest.add(new ApplyListResponseForm("name2",30,"univ2",false, 2L));
+        responseDtoTest.setApplicationList(responseFormListTest);
+        return responseDtoTest;*/
+
+        //여기까지
         isAdmin(clubId, authentication);
 
         log.info("getApplicationList Start");
@@ -147,18 +157,19 @@ public class ApplicationServiceImpl implements ApplicationService {
 
 
         List<ApplyListResponseForm> responseFormList = new ArrayList<>();
-        for (Application apply : applyList){
+        for (Application apply : applyList) {
             Member member = apply.getMember();
             String name = member.getName();
             int age = member.getAge();
             String univ = member.getUniv();
 
-            ApplyListResponseForm applyForm = new ApplyListResponseForm(name,age,univ,false, apply.getId());
+            ApplyListResponseForm applyForm = new ApplyListResponseForm(name, age, univ, false, apply.getId());
 
             responseFormList.add(applyForm);
 
         }
         responseDto.setFormName(form.getTitle());
+        responseDto.setFormPhotoUrl(form.getPhotoUrl());
         responseDto.setApplicationList(responseFormList);
         log.info("GET ApplyList Complete");
 
